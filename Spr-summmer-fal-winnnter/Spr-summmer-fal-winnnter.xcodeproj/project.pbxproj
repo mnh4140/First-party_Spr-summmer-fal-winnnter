@@ -1,0 +1,550 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		ED6D078E2DDC65EF0017A547 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ED6D076F2DDC65ED0017A547 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ED6D07762DDC65ED0017A547;
+			remoteInfo = "Spr-summmer-fal-winnnter";
+		};
+		ED6D07982DDC65EF0017A547 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ED6D076F2DDC65ED0017A547 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ED6D07762DDC65ED0017A547;
+			remoteInfo = "Spr-summmer-fal-winnnter";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		ED6D07772DDC65ED0017A547 /* Spr-summmer-fal-winnnter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Spr-summmer-fal-winnnter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		ED6D078D2DDC65EF0017A547 /* Spr-summmer-fal-winnnterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spr-summmer-fal-winnnterTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		ED6D07972DDC65EF0017A547 /* Spr-summmer-fal-winnnterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spr-summmer-fal-winnnterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		ED6D079F2DDC65EF0017A547 /* Exceptions for "Spr-summmer-fal-winnnter" folder in "Spr-summmer-fal-winnnter" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		ED6D07792DDC65ED0017A547 /* Spr-summmer-fal-winnnter */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				ED6D079F2DDC65EF0017A547 /* Exceptions for "Spr-summmer-fal-winnnter" folder in "Spr-summmer-fal-winnnter" target */,
+			);
+			path = "Spr-summmer-fal-winnnter";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		ED6D07742DDC65ED0017A547 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ED6D078A2DDC65EF0017A547 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ED6D07942DDC65EF0017A547 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		ED6D076E2DDC65ED0017A547 = {
+			isa = PBXGroup;
+			children = (
+				ED6D07792DDC65ED0017A547 /* Spr-summmer-fal-winnnter */,
+				ED6D07782DDC65ED0017A547 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		ED6D07782DDC65ED0017A547 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ED6D07772DDC65ED0017A547 /* Spr-summmer-fal-winnnter.app */,
+				ED6D078D2DDC65EF0017A547 /* Spr-summmer-fal-winnnterTests.xctest */,
+				ED6D07972DDC65EF0017A547 /* Spr-summmer-fal-winnnterUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ED6D07A02DDC65EF0017A547 /* Build configuration list for PBXNativeTarget "Spr-summmer-fal-winnnter" */;
+			buildPhases = (
+				ED6D07732DDC65ED0017A547 /* Sources */,
+				ED6D07742DDC65ED0017A547 /* Frameworks */,
+				ED6D07752DDC65ED0017A547 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				ED6D07792DDC65ED0017A547 /* Spr-summmer-fal-winnnter */,
+			);
+			name = "Spr-summmer-fal-winnnter";
+			packageProductDependencies = (
+			);
+			productName = "Spr-summmer-fal-winnnter";
+			productReference = ED6D07772DDC65ED0017A547 /* Spr-summmer-fal-winnnter.app */;
+			productType = "com.apple.product-type.application";
+		};
+		ED6D078C2DDC65EF0017A547 /* Spr-summmer-fal-winnnterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ED6D07A52DDC65EF0017A547 /* Build configuration list for PBXNativeTarget "Spr-summmer-fal-winnnterTests" */;
+			buildPhases = (
+				ED6D07892DDC65EF0017A547 /* Sources */,
+				ED6D078A2DDC65EF0017A547 /* Frameworks */,
+				ED6D078B2DDC65EF0017A547 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ED6D078F2DDC65EF0017A547 /* PBXTargetDependency */,
+			);
+			name = "Spr-summmer-fal-winnnterTests";
+			packageProductDependencies = (
+			);
+			productName = "Spr-summmer-fal-winnnterTests";
+			productReference = ED6D078D2DDC65EF0017A547 /* Spr-summmer-fal-winnnterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		ED6D07962DDC65EF0017A547 /* Spr-summmer-fal-winnnterUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ED6D07A82DDC65EF0017A547 /* Build configuration list for PBXNativeTarget "Spr-summmer-fal-winnnterUITests" */;
+			buildPhases = (
+				ED6D07932DDC65EF0017A547 /* Sources */,
+				ED6D07942DDC65EF0017A547 /* Frameworks */,
+				ED6D07952DDC65EF0017A547 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ED6D07992DDC65EF0017A547 /* PBXTargetDependency */,
+			);
+			name = "Spr-summmer-fal-winnnterUITests";
+			packageProductDependencies = (
+			);
+			productName = "Spr-summmer-fal-winnnterUITests";
+			productReference = ED6D07972DDC65EF0017A547 /* Spr-summmer-fal-winnnterUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		ED6D076F2DDC65ED0017A547 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					ED6D07762DDC65ED0017A547 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					ED6D078C2DDC65EF0017A547 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = ED6D07762DDC65ED0017A547;
+					};
+					ED6D07962DDC65EF0017A547 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = ED6D07762DDC65ED0017A547;
+					};
+				};
+			};
+			buildConfigurationList = ED6D07722DDC65ED0017A547 /* Build configuration list for PBXProject "Spr-summmer-fal-winnnter" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = ED6D076E2DDC65ED0017A547;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = ED6D07782DDC65ED0017A547 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */,
+				ED6D078C2DDC65EF0017A547 /* Spr-summmer-fal-winnnterTests */,
+				ED6D07962DDC65EF0017A547 /* Spr-summmer-fal-winnnterUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		ED6D07752DDC65ED0017A547 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ED6D078B2DDC65EF0017A547 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ED6D07952DDC65EF0017A547 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		ED6D07732DDC65ED0017A547 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ED6D07892DDC65EF0017A547 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ED6D07932DDC65EF0017A547 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		ED6D078F2DDC65EF0017A547 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
+			targetProxy = ED6D078E2DDC65EF0017A547 /* PBXContainerItemProxy */;
+		};
+		ED6D07992DDC65EF0017A547 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
+			targetProxy = ED6D07982DDC65EF0017A547 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		ED6D07A12DDC65EF0017A547 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Spr-summmer-fal-winnnter/Info.plist";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.NH.Spr-summmer-fal-winnnter";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		ED6D07A22DDC65EF0017A547 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Spr-summmer-fal-winnnter/Info.plist";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.NH.Spr-summmer-fal-winnnter";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		ED6D07A32DDC65EF0017A547 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		ED6D07A42DDC65EF0017A547 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		ED6D07A62DDC65EF0017A547 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.NH.Spr-summmer-fal-winnnterTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Spr-summmer-fal-winnnter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Spr-summmer-fal-winnnter";
+			};
+			name = Debug;
+		};
+		ED6D07A72DDC65EF0017A547 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.NH.Spr-summmer-fal-winnnterTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Spr-summmer-fal-winnnter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Spr-summmer-fal-winnnter";
+			};
+			name = Release;
+		};
+		ED6D07A92DDC65EF0017A547 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.NH.Spr-summmer-fal-winnnterUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Spr-summmer-fal-winnnter";
+			};
+			name = Debug;
+		};
+		ED6D07AA2DDC65EF0017A547 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.NH.Spr-summmer-fal-winnnterUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Spr-summmer-fal-winnnter";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		ED6D07722DDC65ED0017A547 /* Build configuration list for PBXProject "Spr-summmer-fal-winnnter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ED6D07A32DDC65EF0017A547 /* Debug */,
+				ED6D07A42DDC65EF0017A547 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ED6D07A02DDC65EF0017A547 /* Build configuration list for PBXNativeTarget "Spr-summmer-fal-winnnter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ED6D07A12DDC65EF0017A547 /* Debug */,
+				ED6D07A22DDC65EF0017A547 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ED6D07A52DDC65EF0017A547 /* Build configuration list for PBXNativeTarget "Spr-summmer-fal-winnnterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ED6D07A62DDC65EF0017A547 /* Debug */,
+				ED6D07A72DDC65EF0017A547 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ED6D07A82DDC65EF0017A547 /* Build configuration list for PBXNativeTarget "Spr-summmer-fal-winnnterUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ED6D07A92DDC65EF0017A547 /* Debug */,
+				ED6D07AA2DDC65EF0017A547 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = ED6D076F2DDC65ED0017A547 /* Project object */;
+}
