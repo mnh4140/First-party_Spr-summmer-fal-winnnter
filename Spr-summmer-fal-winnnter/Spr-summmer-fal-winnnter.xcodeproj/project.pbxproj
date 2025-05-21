@@ -53,6 +53,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				DataModel.swift,
+				WeatherForecast.swift,
+				WeatherResponse.swift,
 			);
 			target = ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
 		};
