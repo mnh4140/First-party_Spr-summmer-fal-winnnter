@@ -35,11 +35,11 @@ struct Coord: Codable {
 
 // MARK: - Main
 struct Main: Codable { // 날씨 상태 배열
-    let temp, feelsLike, tempMin, tempMax: Double // temp = 현재 기온
-    let pressure, humidity, seaLevel, grndLevel: Int // pressure = 기압, humidity = 습도
+    let temp, feelsLike, tempMin, tempMax: Double
+    let pressure, humidity, seaLevel, grndLevel: Int
 
     enum CodingKeys: String, CodingKey {
-        case temp // temp = 현재 기온
+        case temp // 현재 기온
         case feelsLike = "feels_like" //  체감 온도
         case tempMin = "temp_min" // 최저 기온
         case tempMax = "temp_max" // 최고 기온
