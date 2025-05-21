@@ -142,14 +142,14 @@ extension MainViewController: UICollectionViewDataSource {
         let section = NSCollectionLayoutSection(group: group)
         let header = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: .init(widthDimension: .fractionalWidth(1),
-                              heightDimension: .absolute(20)),
+                              heightDimension: .absolute(30)),
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top)
         
-//        let decorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "section-background-element-kind")
+        let decorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "section-background-element-kind")
         
         section.interGroupSpacing = -30
-//        section.decorationItems = [decorationItem]
+        section.decorationItems = [decorationItem]
         section.boundarySupplementaryItems = [header]
         
         return section
@@ -167,16 +167,16 @@ extension MainViewController: UICollectionViewDataSource {
             subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
-        let header = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: .init(widthDimension: .fractionalWidth(1),
-                              heightDimension: .absolute(20)),
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top)
+//        let header = NSCollectionLayoutBoundarySupplementaryItem(
+//            layoutSize: .init(widthDimension: .fractionalWidth(1),
+//                              heightDimension: .absolute(20)),
+//            elementKind: UICollectionView.elementKindSectionHeader,
+//            alignment: .top)
         
-//        let decoration/*Item = NSCollectionLayoutDecorationItem.background(elementKind: "section-b*/ackground-element-kind")
+        let decorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "section-background-element-kind")
         
-//        section.decorationItems = [decorationItem]
-        section.boundarySupplementaryItems = [header]
+        section.decorationItems = [decorationItem]
+//        section.boundarySupplementaryItems = [header]
         
         return section
     }

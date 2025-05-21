@@ -58,6 +58,9 @@ class ForecastListCell: UICollectionViewCell {
     }
     
     private func setupUI() {
+//        contentView.backgroundColor = .lightGray.withAlphaComponent(1/2)
+//        contentView.layer.cornerRadius = contentView.frame.width / 15
+        
         [weatherIcon, tempLabel]
             .forEach { stackView.addArrangedSubview($0) }
         

@@ -11,6 +11,14 @@ import SnapKit
 class ForecastListCellBackground: UICollectionReusableView {
     static let identifier = "ForecastListCellBackground"
     
+    private let backgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .lightGray.withAlphaComponent(1/2)
+        view.layer.cornerRadius = 20
+        
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -22,8 +30,13 @@ class ForecastListCellBackground: UICollectionReusableView {
     }
     
     private func setupUI() {
-        self.backgroundColor = .lightGray.withAlphaComponent(1/2)
-        self.layer.cornerRadius = self.frame.width / 15
+        self.backgroundColor = .clear
+        self.addSubview(backgroundView)
         
+        backgroundView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.top.bottom.equalToSuperview().inset(10)
+            $0.center.equalToSuperview()
+        }
     }
 }

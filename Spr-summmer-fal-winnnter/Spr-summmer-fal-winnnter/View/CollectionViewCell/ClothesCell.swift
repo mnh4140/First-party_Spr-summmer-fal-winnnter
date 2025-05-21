@@ -56,8 +56,8 @@ class ClothesCell: UICollectionViewCell {
     }
     
     private func setupUI() {
-        contentView.backgroundColor = .lightGray.withAlphaComponent(1/2)
-        contentView.layer.cornerRadius = contentView.frame.width / 15
+//        contentView.backgroundColor = .lightGray.withAlphaComponent(1/2)
+//        contentView.layer.cornerRadius = contentView.frame.width / 15
         
         [leftImageView, rightImageView]
             .forEach { stackView.addArrangedSubview($0) }
