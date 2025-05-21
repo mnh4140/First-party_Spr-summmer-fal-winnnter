@@ -289,6 +289,8 @@
 /* Begin XCBuildConfiguration section */
 		ED6D07A12DDC65EF0017A547 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = ED6D07792DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -316,6 +318,8 @@
 		};
 		ED6D07A22DDC65EF0017A547 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = ED6D07792DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
