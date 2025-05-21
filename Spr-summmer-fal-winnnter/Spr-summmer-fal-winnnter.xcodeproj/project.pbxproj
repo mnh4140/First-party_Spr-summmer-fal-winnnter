@@ -53,12 +53,18 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				DataModel.swift,
+				WeatherForecast.swift,
+				WeatherResponse.swift,
 			);
 			target = ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
 		};
 		ED5484472DDDA19C003CB950 /* Exceptions for "View" folder in "Spr-summmer-fal-winnnter" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				CollectionViewCell/ClothesCell.swift,
+				CollectionViewCell/ForecastListCell.swift,
+				CollectionViewCell/ForecastListCellBackground.swift,
+				CollectionViewCell/MainCell.swift,
 				Main/MainViewController.swift,
 				Rainfall/RainfallViewController.swift,
 				Search/SearchViewController.swift,
@@ -368,6 +374,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YM7ARGY64W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Spr-summmer-fal-winnnter/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -395,6 +402,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YM7ARGY64W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Spr-summmer-fal-winnnter/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
