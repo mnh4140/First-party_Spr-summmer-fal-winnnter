@@ -37,9 +37,22 @@
 		ED6D07972DDC65EF0017A547 /* Spr-summmer-fal-winnnterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spr-summmer-fal-winnnterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		ED5485512DDDE15F003CB950 /* Exceptions for "Spr-summmer-fal-winnnter" folder in "Spr-summmer-fal-winnnter" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		ED54853E2DDDD0A3003CB950 /* Spr-summmer-fal-winnnter */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				ED5485512DDDE15F003CB950 /* Exceptions for "Spr-summmer-fal-winnnter" folder in "Spr-summmer-fal-winnnter" target */,
+			);
 			path = "Spr-summmer-fal-winnnter";
 			sourceTree = "<group>";
 		};
