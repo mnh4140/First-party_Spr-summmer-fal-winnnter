@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		ED5484272DDDA0FE003CB950 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED5484242DDDA0FE003CB950 /* Assets.xcassets */; };
+		ED5484562DDDA2FF003CB950 /* Secret.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = ED5484552DDDA2FF003CB950 /* Secret.xcconfig */; };
 		ED6D07AD2DDC66360017A547 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = ED6D07AC2DDC66360017A547 /* SnapKit */; };
 		ED6D07B02DDC66470017A547 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = ED6D07AF2DDC66470017A547 /* Alamofire */; };
 		ED6D07B32DDC665E0017A547 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = ED6D07B22DDC665E0017A547 /* RxCocoa */; };
@@ -35,6 +36,7 @@
 /* Begin PBXFileReference section */
 		ED5484242DDDA0FE003CB950 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ED5484252DDDA0FE003CB950 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ED5484552DDDA2FF003CB950 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 		ED6D07772DDC65ED0017A547 /* Spr-summmer-fal-winnnter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Spr-summmer-fal-winnnter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED6D078D2DDC65EF0017A547 /* Spr-summmer-fal-winnnterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spr-summmer-fal-winnnterTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED6D07972DDC65EF0017A547 /* Spr-summmer-fal-winnnterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spr-summmer-fal-winnnterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -45,6 +47,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				LocationManager/LocationManager.swift,
+				LocationManager/LocationViewController.swift,
 				NetworkManager/NetworkManager.swift,
 			);
 			target = ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
@@ -150,6 +153,7 @@
 		ED5484262DDDA0FE003CB950 /* Spr-summmer-fal-winnnter */ = {
 			isa = PBXGroup;
 			children = (
+				ED5484552DDDA2FF003CB950 /* Secret.xcconfig */,
 				ED5484302DDDA123003CB950 /* App */,
 				ED54843C2DDDA123003CB950 /* Common */,
 				ED5484392DDDA123003CB950 /* Model */,
@@ -303,6 +307,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED5484562DDDA2FF003CB950 /* Secret.xcconfig in Resources */,
 				ED5484272DDDA0FE003CB950 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
