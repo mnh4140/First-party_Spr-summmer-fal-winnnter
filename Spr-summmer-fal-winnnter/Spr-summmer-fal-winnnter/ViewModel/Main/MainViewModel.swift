@@ -6,3 +6,9 @@
 //
 
 import Foundation
+import RxSwift
+import RxRelay
+
+class MainViewModel {
+    
+}
