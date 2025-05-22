@@ -41,6 +41,7 @@
 		ED5485512DDDE15F003CB950 /* Exceptions for "Spr-summmer-fal-winnnter" folder in "Spr-summmer-fal-winnnter" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Info.plist,
 				LocationManager/LocationManager.swift,
 				NetworkManager/NetworkManager.swift,
 			);
