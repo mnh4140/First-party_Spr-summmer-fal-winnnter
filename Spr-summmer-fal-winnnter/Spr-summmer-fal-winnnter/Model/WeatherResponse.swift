@@ -67,5 +67,5 @@ struct Weather: Codable {
 struct Wind: Codable {
     let speed: Double // 바람 속도 (m/s)
     let deg: Int // 풍향
-    let gust: Double // 돌풍 풍속 (m/s)
+    let gust: Double? // 돌풍 풍속 (m/s)
 }
