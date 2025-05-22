@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ForecastListCellBackground: UICollectionReusableView {
+class CellBackground: UICollectionReusableView {
     static let identifier = "ForecastListCellBackground"
     
     private let backgroundView: UIView = {

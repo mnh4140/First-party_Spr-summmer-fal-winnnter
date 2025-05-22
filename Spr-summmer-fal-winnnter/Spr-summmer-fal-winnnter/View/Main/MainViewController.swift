@@ -29,6 +29,8 @@ class MainViewController: UIViewController {
                                 forCellWithReuseIdentifier: ClothesCell.identifier)
         collectionView.register(ForecastListCell.self,
                                 forCellWithReuseIdentifier: ForecastListCell.identifier)
+        collectionView.register(TenDayForecastCell.self,
+                                forCellWithReuseIdentifier: TenDayForecastCell.identifier)
         
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -77,6 +79,7 @@ extension MainViewController: UICollectionViewDataSource {
         case .main: return 1
         case .clothes: return 1
         case .forecastList: return 10
+        case .tenDayForecast: return 10
         case .none: return 0
         }
     }
@@ -102,6 +105,21 @@ extension MainViewController: UICollectionViewDataSource {
             cell.test()
             
             return cell
+        case .tenDayForecast:
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TenDayForecastCell.identifier, for: indexPath) as? TenDayForecastCell else { return .init() }
+            
+            if indexPath.row == 0 {
+                // 첫 번째 셀
+                // cell.setCurrentTemp(data: <#T##ForecastList#>)
+                cell.testFirstCell()
+            } else if indexPath.row == 9 {
+                // 마지막 셀
+                cell.deleteSeparator()
+            }
+            
+            cell.test()
+            
+            return cell
         case .none:
             return .init()
         }
@@ -115,12 +133,34 @@ extension MainViewController: UICollectionViewDataSource {
             case .main: return self.mainSectionConfigure()
             case .clothes: return self.mainSectionConfigure()
             case .forecastList: return self.forecastListSectionConfigure()
+            case .tenDayForecast: return self.tenDayForecastSectionConfigure()
             }
+            
         }
         
-        layout.register(ForecastListCellBackground.self, forDecorationViewOfKind: "section-background-element-kind")
+        layout.register(CellBackground.self, forDecorationViewOfKind: "section-background-element-kind")
         
         return layout
+    }
+    
+    private func tenDayForecastSectionConfigure() -> NSCollectionLayoutSection {
+        let item = NSCollectionLayoutItem(
+            layoutSize: .init(widthDimension: .fractionalWidth(1),
+                              heightDimension: .fractionalHeight(1)
+        ))
+        
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: .init(widthDimension: .fractionalWidth(1),
+                              heightDimension: .fractionalWidth(0.3)),
+            subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        let decorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "section-background-element-kind")
+        
+        section.decorationItems = [decorationItem]
+        
+        return section
     }
     
     private func forecastListSectionConfigure() -> NSCollectionLayoutSection {
@@ -167,22 +207,16 @@ extension MainViewController: UICollectionViewDataSource {
             subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
-//        let header = NSCollectionLayoutBoundarySupplementaryItem(
-//            layoutSize: .init(widthDimension: .fractionalWidth(1),
-//                              heightDimension: .absolute(20)),
-//            elementKind: UICollectionView.elementKindSectionHeader,
-//            alignment: .top)
         
         let decorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "section-background-element-kind")
         
         section.decorationItems = [decorationItem]
-//        section.boundarySupplementaryItems = [header]
         
         return section
     }
     
     enum Section: Int, CaseIterable {
-        case main, clothes, forecastList
+        case main, clothes, forecastList, tenDayForecast
     }
 
 }

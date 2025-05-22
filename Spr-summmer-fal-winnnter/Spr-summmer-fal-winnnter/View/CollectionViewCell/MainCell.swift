@@ -100,9 +100,6 @@ class MainCell: UICollectionViewCell {
     }
     
     private func setupUI() {
-//        contentView.backgroundColor = .lightGray.withAlphaComponent(1/2)
-//        contentView.layer.cornerRadius = contentView.frame.width / 15
-        
         [maxTempLabel, minTempLabel]
             .forEach { maxMinTempStackView.addArrangedSubview($0) }
         

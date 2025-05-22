@@ -61,10 +61,12 @@
 		ED5484472DDDA19C003CB950 /* Exceptions for "View" folder in "Spr-summmer-fal-winnnter" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				CollectionViewCell/CellBackground.swift,
 				CollectionViewCell/ClothesCell.swift,
 				CollectionViewCell/ForecastListCell.swift,
-				CollectionViewCell/ForecastListCellBackground.swift,
 				CollectionViewCell/MainCell.swift,
+				CollectionViewCell/TempProgressBar.swift,
+				CollectionViewCell/TenDayForecastCell.swift,
 				Main/MainViewController.swift,
 				Rainfall/RainfallViewController.swift,
 				Search/SearchViewController.swift,
