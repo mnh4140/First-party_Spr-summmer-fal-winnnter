@@ -42,6 +42,43 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				LocationManager/LocationManager.swift,
+				NetworkManager/NetworkManager.swift,
+			);
+			target = ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
+		};
+		ED5484442DDDA18D003CB950 /* Exceptions for "Model" folder in "Spr-summmer-fal-winnnter" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				DataModel.swift,
+				WeatherForecast.swift,
+				WeatherResponse.swift,
+			);
+			target = ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
+		};
+		ED5484472DDDA19C003CB950 /* Exceptions for "View" folder in "Spr-summmer-fal-winnnter" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CollectionViewCell/CellBackground.swift,
+				CollectionViewCell/ClothesCell.swift,
+				CollectionViewCell/ForecastListCell.swift,
+				CollectionViewCell/MainCell.swift,
+				CollectionViewCell/TempProgressBar.swift,
+				CollectionViewCell/TenDayForecastCell.swift,
+				Main/MainViewController.swift,
+				Rainfall/RainfallViewController.swift,
+				Search/SearchViewController.swift,
+				Settings/SettingsViewController.swift,
+				SunriseSunset/SunriseSunsetViewController.swift,
+			);
+			target = ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
+		};
+		ED5484522DDDA1DB003CB950 /* Exceptions for "ViewModel" folder in "Spr-summmer-fal-winnnter" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Location/LocationViewModel.swift,
+				Main/MainViewModel.swift,
+
 			);
 			target = ED6D07762DDC65ED0017A547 /* Spr-summmer-fal-winnnter */;
 		};
@@ -294,6 +331,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YM7ARGY64W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Spr-summmer-fal-winnnter/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -321,6 +359,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YM7ARGY64W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Spr-summmer-fal-winnnter/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
