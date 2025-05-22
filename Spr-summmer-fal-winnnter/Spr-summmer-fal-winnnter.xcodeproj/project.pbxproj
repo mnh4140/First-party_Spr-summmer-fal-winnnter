@@ -33,6 +33,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BB797FF72DDF2DBC00662B40 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
+		ED5484242DDDA0FE003CB950 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ED6D07772DDC65ED0017A547 /* Spr-summmer-fal-winnnter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Spr-summmer-fal-winnnter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED6D078D2DDC65EF0017A547 /* Spr-summmer-fal-winnnterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spr-summmer-fal-winnnterTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED6D07972DDC65EF0017A547 /* Spr-summmer-fal-winnnterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spr-summmer-fal-winnnterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,11 +92,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BB79803A2DDF2E4D00662B40 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				BB797FF72DDF2DBC00662B40 /* Secret.xcconfig */,
+				ED5484242DDDA0FE003CB950 /* Assets.xcassets */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		ED6D076E2DDC65ED0017A547 = {
 			isa = PBXGroup;
 			children = (
 				ED54853E2DDDD0A3003CB950 /* Spr-summmer-fal-winnnter */,
 				ED6D07782DDC65ED0017A547 /* Products */,
+				BB79803A2DDF2E4D00662B40 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -293,6 +305,8 @@
 /* Begin XCBuildConfiguration section */
 		ED6D07A12DDC65EF0017A547 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = ED54853E2DDDD0A3003CB950 /* Spr-summmer-fal-winnnter */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -321,6 +335,8 @@
 		};
 		ED6D07A22DDC65EF0017A547 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = ED54853E2DDDD0A3003CB950 /* Spr-summmer-fal-winnnter */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
