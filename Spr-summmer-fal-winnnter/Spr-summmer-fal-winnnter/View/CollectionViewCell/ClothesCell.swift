@@ -47,7 +47,6 @@ class ClothesCell: UICollectionViewCell {
     func test() {
         leftImageView.backgroundColor = .white
         rightImageView.backgroundColor = .white
-        print("ClothesCell test Start")
     }
     
     func imageLoad(leftImage: UIImage, rightImage: UIImage) {
