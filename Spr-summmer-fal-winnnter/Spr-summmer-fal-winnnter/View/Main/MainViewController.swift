@@ -45,13 +45,39 @@ extension MainViewController {
         super.viewDidLoad()
         
         setupUI()
+        bind()
+        inputBind()
     }
 }
 
 // MARK: - Method
 extension MainViewController {
     
+    private func bind() {
+        viewModel.output.showSettingMenu
+            .subscribe { [weak self] _ in
+                guard let self else { return }
+                self.viewModel.showSettingMenu(on: self)
+            }.disposed(by: disposeBag)
+    }
+    
+    private func inputBind() {
+        self.navigationItem.leftBarButtonItem?.rx.tap.subscribe { [weak self] _ in
+            guard let self else { return }
+            self.viewModel.input.accept(.settingButtonTap)
+        }.disposed(by: disposeBag)
+    }
+    
     private func setupUI() {
+        let menuButton = UIBarButtonItem(
+            image: UIImage(systemName: "line.3.horizontal"),
+            style: .plain,
+            target: nil,
+            action: nil)
+        menuButton.tintColor = .black
+        
+        self.navigationItem.leftBarButtonItem = menuButton
+        
         view.backgroundColor = UIColor(red: 154/255, green: 203/255, blue: 208/255, alpha: 1.0)
         view.addSubview(weatherCollectionView)
         
