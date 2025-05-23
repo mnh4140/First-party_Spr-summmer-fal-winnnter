@@ -5,6 +5,7 @@
 //  Created by NH on 5/21/25.
 //
 
+import Foundation
 import UIKit
 import SnapKit
 import RxSwift
@@ -82,5 +83,17 @@ final class SearchViewController: UIViewController {
                 cell.configure(data: Address)
             }
             .disposed(by: disposeBag)
+    }
+}
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let menuButton = UIBarButtonItem(
+            image: UIImage(systemName: "line.3.horizontal"),
+            target: nil,
+            style: .plain,
+            action: nil)
+        menuButton.tintColor = .black
+        self.navigationItem.leftBarButtonItem = menuButton
+extension SearchViewController {
     }
 }

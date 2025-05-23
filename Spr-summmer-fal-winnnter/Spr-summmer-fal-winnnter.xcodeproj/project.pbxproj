@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		931C3EE52DDF2C2E00A74641 /* SideMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 931C3EE42DDF2C2E00A74641 /* SideMenu */; };
 		ED6D07AD2DDC66360017A547 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = ED6D07AC2DDC66360017A547 /* SnapKit */; };
 		ED6D07B02DDC66470017A547 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = ED6D07AF2DDC66470017A547 /* Alamofire */; };
 		ED6D07B32DDC665E0017A547 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = ED6D07B22DDC665E0017A547 /* RxCocoa */; };
@@ -32,6 +33,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BB797FF72DDF2DBC00662B40 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
+		ED5484242DDDA0FE003CB950 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ED6D07772DDC65ED0017A547 /* Spr-summmer-fal-winnnter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Spr-summmer-fal-winnnter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED6D078D2DDC65EF0017A547 /* Spr-summmer-fal-winnnterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spr-summmer-fal-winnnterTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED6D07972DDC65EF0017A547 /* Spr-summmer-fal-winnnterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Spr-summmer-fal-winnnterUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,6 +70,7 @@
 				ED6D07AD2DDC66360017A547 /* SnapKit in Frameworks */,
 				ED6D07B72DDC665E0017A547 /* RxSwift in Frameworks */,
 				ED6D07B52DDC665E0017A547 /* RxRelay in Frameworks */,
+				931C3EE52DDF2C2E00A74641 /* SideMenu in Frameworks */,
 				ED6D07B02DDC66470017A547 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,11 +92,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BB79803A2DDF2E4D00662B40 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				BB797FF72DDF2DBC00662B40 /* Secret.xcconfig */,
+				ED5484242DDDA0FE003CB950 /* Assets.xcassets */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		ED6D076E2DDC65ED0017A547 = {
 			isa = PBXGroup;
 			children = (
 				ED54853E2DDDD0A3003CB950 /* Spr-summmer-fal-winnnter */,
 				ED6D07782DDC65ED0017A547 /* Products */,
+				BB79803A2DDF2E4D00662B40 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -131,6 +145,7 @@
 				ED6D07B22DDC665E0017A547 /* RxCocoa */,
 				ED6D07B42DDC665E0017A547 /* RxRelay */,
 				ED6D07B62DDC665E0017A547 /* RxSwift */,
+				931C3EE42DDF2C2E00A74641 /* SideMenu */,
 			);
 			productName = "Spr-summmer-fal-winnnter";
 			productReference = ED6D07772DDC65ED0017A547 /* Spr-summmer-fal-winnnter.app */;
@@ -212,6 +227,7 @@
 				ED6D07AB2DDC66360017A547 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				ED6D07AE2DDC66470017A547 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				ED6D07B12DDC665E0017A547 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				931C3EE32DDF2C2E00A74641 /* XCRemoteSwiftPackageReference "SideMenu" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = ED6D07782DDC65ED0017A547 /* Products */;
@@ -289,11 +305,14 @@
 /* Begin XCBuildConfiguration section */
 		ED6D07A12DDC65EF0017A547 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = ED54853E2DDDD0A3003CB950 /* Spr-summmer-fal-winnnter */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YM7ARGY64W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Spr-summmer-fal-winnnter/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -316,11 +335,14 @@
 		};
 		ED6D07A22DDC65EF0017A547 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = ED54853E2DDDD0A3003CB950 /* Spr-summmer-fal-winnnter */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YM7ARGY64W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Spr-summmer-fal-winnnter/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -570,6 +592,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		931C3EE32DDF2C2E00A74641 /* XCRemoteSwiftPackageReference "SideMenu" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jonkykong/SideMenu.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.5.0;
+			};
+		};
 		ED6D07AB2DDC66360017A547 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -597,6 +627,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		931C3EE42DDF2C2E00A74641 /* SideMenu */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 931C3EE32DDF2C2E00A74641 /* XCRemoteSwiftPackageReference "SideMenu" */;
+			productName = SideMenu;
+		};
 		ED6D07AC2DDC66360017A547 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = ED6D07AB2DDC66360017A547 /* XCRemoteSwiftPackageReference "SnapKit" */;
