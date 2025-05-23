@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 class CellBackground: UICollectionReusableView {
-    static let identifier = "ForecastListCellBackground"
+    static let identifier = "CellBackground"
     
     private let backgroundView: UIView = {
         let view = UIView()

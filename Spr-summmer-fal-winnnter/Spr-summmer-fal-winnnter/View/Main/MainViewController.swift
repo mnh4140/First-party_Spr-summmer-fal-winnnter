@@ -127,7 +127,7 @@ extension MainViewController: UICollectionViewDataSource {
         case .main:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCell.identifier, for: indexPath) as? MainCell else { return .init() }
             
-            guard let weather = viewModel.output.mainCellData.value else { return .init() }
+            guard let weather = viewModel.output.mainCellData.value else { return cell }
                 
             cell.setText(weather: weather)
             
@@ -141,12 +141,10 @@ extension MainViewController: UICollectionViewDataSource {
         case .forecastList:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastListCell.identifier, for: indexPath) as? ForecastListCell else { return .init() }
             
-            guard let list = self.viewModel.output.forecastListCellData.value?.forecastList else { return .init() }
-            guard let image = viewModel.output.forecastListCellData.value?.weatherIcons else { return .init() }
+            guard let data = self.viewModel.output.forecastListCellData.value else { return cell }
             
-            if indexPath.row < 10 {
-                cell.setCell(data: list[indexPath.row], icon: image[indexPath.row])
-            }
+            cell.setCell(data: data.forecastList[indexPath.row],
+                         icon: data.weatherIcons[indexPath.row])
             
             return cell
         case .tenDayForecast:
