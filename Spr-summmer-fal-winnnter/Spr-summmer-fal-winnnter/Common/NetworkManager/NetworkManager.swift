@@ -102,5 +102,19 @@ class NetworkManager {
         }
     }
     
+    // 날씨 아이콘을 불러오는 함수
+    func loadIconImage(icon: String) -> Single<UIImage> {
+        return Single.create { single in
+            let imageUrl = "https://openweathermap.org/img/wn/\(icon)@2x.png"
+            
+            AF.request(imageUrl).responseData { response in
+                if let data = response.data, let image = UIImage(data: data) {
+                    single(.success(image))
+                }
+            }
+            
+            return Disposables.create()
+        }
+    }
     
 }
