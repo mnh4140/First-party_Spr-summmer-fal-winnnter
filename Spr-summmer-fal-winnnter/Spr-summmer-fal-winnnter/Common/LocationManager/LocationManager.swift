@@ -14,13 +14,15 @@ final class LocationManager: NSObject {
     static let shared = LocationManager()
 
     private let locationManager = CLLocationManager() // CoreLocation의 핵심 객체. 위치를 요청하고 수신함.
-    private let geocoder = CLGeocoder() // 위도/경도를 주소(도시, 구, 동) 등의 텍스트로 바꾸는 객체
+     let geocoder = CLGeocoder() // 위도/경도를 주소(도시, 구, 동) 등의 텍스트로 바꾸는 객체
 
     // RxSwift
     // 서브젝트로 사용한 이유: 모델 계층에서 단순 이벤트 전달만 하기 때문
     // UI - ViewModel 은 relay가 적합
-    let addressSubject = PublishSubject<String>()
     let errorSubject = PublishSubject<String>()
+    
+    // 좌표 전달 서브젝트
+    let coordinateSubject = PublishSubject<CLLocationCoordinate2D>()
 
     private override init() {
         super.init()
@@ -35,9 +37,38 @@ final class LocationManager: NSObject {
         case .notDetermined: // 아직 사용자에게 권한을 요청하지 않은 상태 → 권한 요청
             locationManager.requestWhenInUseAuthorization()
         case .authorizedWhenInUse, .authorizedAlways: // 권한이 있으면 requestLocation() 호출 → 현재 위치 1회 요청
-            locationManager.requestLocation()
+            locationManager.requestLocation() // 한번 요청
+            //locationManager.startUpdatingLocation() // 지속적 요청
+            
         default:
             errorSubject.onNext("위치 권한이 없습니다.")
+        }
+    }
+    
+    /// 검색 키워드를 위도 경도로 변경하는  함수
+    func findAddress(address: String) {
+        geocoder.geocodeAddressString(address) { placemarks, error in
+            if let error = error {
+                print("지오코딩 실패: \(error)")
+                return
+            }
+            
+            if let location = placemarks?.first?.location {
+                print("위도: \(location.coordinate.latitude), 경도: \(location.coordinate.longitude)")
+            }
+        }
+    }
+    
+    func latlogToAddress(location: CLLocation) {
+        // 위도 경도를 주소로 변환
+        geocoder.reverseGeocodeLocation(location) { placemarks, error in
+            if let error = error {
+                self.errorSubject.onNext("주소 변환 실패: \(error.localizedDescription)")
+                return
+            }
+            
+            let coordinate = location.coordinate
+            self.coordinateSubject.onNext(coordinate)
         }
     }
 }
@@ -51,29 +82,10 @@ extension LocationManager: CLLocationManagerDelegate {
             return
         }
         
+        // 디버깅
         print(location.coordinate.latitude, location.coordinate.longitude)
 
-        // 위도 경도를 주소로 변환
-        geocoder.reverseGeocodeLocation(location) { placemarks, error in
-            if let error = error {
-                self.errorSubject.onNext("주소 변환 실패: \(error.localizedDescription)")
-                return
-            }
-
-            if let placemark = placemarks?.first {
-                let address = [
-                    placemark.administrativeArea, // 경기도
-                    placemark.locality,           // 광주시
-                    placemark.subLocality         // 신현동
-                ].compactMap { $0 }.joined(separator: " ")
-                // compactMap { $0 } : nil 값 제거
-                // joined(separator: " ") : 공백으로 연결된 주소 문자열 생성
-
-                self.addressSubject.onNext(address) // 이벤트 방출
-            } else {
-                self.errorSubject.onNext("주소를 찾을 수 없습니다.") // 에러 방출
-            }
-        }
+        latlogToAddress(location: location)
     }
 
     // 위치 요청 실패 시 호출됨
