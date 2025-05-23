@@ -11,9 +11,13 @@ import RxRelay
 
 class ViewModel {
     var disposeBag = DisposeBag()
-    let regionCodeRelay = PublishRelay<[RegionCodeResponse.Document]>()
+    let fetchAddressRelay = PublishRelay<[AddressData.Document]>() // 주소 -> 위도 경도 가져오기
+    let regionCodeRelay = PublishRelay<[RegionCodeResponse.Document]>() // 위도 경도 -> 주소로 가져오기
     
-    func fetchAddress(query: String) -> Observable<[AddressData.Document]> {
+    /// - 주소를 위도 경도 값으로 변환
+    /// - query 값은 검색어
+    /// - 현재는 주소 검색 결과만 받아오고, 위도 경도 가져오는 로직은 없음
+    func fetchAddress(query: String) {
         var components = URLComponents(string: "https://dapi.kakao.com/v2/local/search/address")
         components?.queryItems = [
             URLQueryItem(name: "query", value: query)

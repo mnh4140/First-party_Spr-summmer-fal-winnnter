@@ -45,7 +45,8 @@ final class LocationManager: NSObject {
         }
     }
     
-    /// 검색 키워드를 위도 경도로 변경하는  함수
+    /// - 검색 키워드를 위도 경도로 변경하는  함수
+    /// - 아직 사용 안하는 함수
     func findAddress(address: String) {
         geocoder.geocodeAddressString(address) { placemarks, error in
             if let error = error {
@@ -75,6 +76,8 @@ final class LocationManager: NSObject {
 
 extension LocationManager: CLLocationManagerDelegate {
     /// 위치 업데이트를 받는 delegate 메서드
+    /// - 위치 업데이트를 받는 delegate 메서드
+    /// - 위치 정보가 업데이트 되면 실행되는 메서드
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // locations.first 사용 이유 : 가장 최신 위치 하나만 사용
         guard let location = locations.first else {
