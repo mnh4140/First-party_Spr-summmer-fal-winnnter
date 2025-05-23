@@ -60,9 +60,15 @@ extension MainViewController {
                 self.viewModel.showSettingMenu(on: self)
             }.disposed(by: disposeBag)
         
-        viewModel.output.mainCellOutput
+        viewModel.output.mainCellData
             .subscribe { [weak self] _ in
                 self?.weatherCollectionView.reloadData()
+            }.disposed(by: disposeBag)
+        
+        viewModel.output.forecastListCellData
+            .subscribe { [weak self] weather in
+                guard let self else { return }
+                self.weatherCollectionView.reloadData()
             }.disposed(by: disposeBag)
     }
     
@@ -109,7 +115,7 @@ extension MainViewController: UICollectionViewDataSource {
         switch Section(rawValue: section) {
         case .main: return 1
         case .clothes: return 1
-        case .forecastList: return 10
+        case .forecastList: return self.viewModel.output.forecastListCellData.value?.forecastList.count ?? 0
         case .tenDayForecast: return 10
         case .none: return 0
         }
@@ -121,9 +127,9 @@ extension MainViewController: UICollectionViewDataSource {
         case .main:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCell.identifier, for: indexPath) as? MainCell else { return .init() }
             
-            if let weather = viewModel.output.mainCellOutput.value {
-                cell.setText(weather: weather)
-            }
+            guard let weather = viewModel.output.mainCellData.value else { return .init() }
+                
+            cell.setText(weather: weather)
             
             return cell
         case .clothes:
@@ -135,7 +141,12 @@ extension MainViewController: UICollectionViewDataSource {
         case .forecastList:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastListCell.identifier, for: indexPath) as? ForecastListCell else { return .init() }
             
-            cell.test()
+            guard let list = self.viewModel.output.forecastListCellData.value?.forecastList else { return .init() }
+            guard let image = viewModel.output.forecastListCellData.value?.weatherIcons else { return .init() }
+            
+            if indexPath.row < 10 {
+                cell.setCell(data: list[indexPath.row], icon: image[indexPath.row])
+            }
             
             return cell
         case .tenDayForecast:
