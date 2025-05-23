@@ -53,26 +53,24 @@ class MainViewModel {
     }
     
     private func loadForecastListData() {
-        NetworkManager.shared.fetchForeCastData(lat: 37.5, lon: 126.9)
-            .flatMap { forecast in
-                let tenItems = [ForecastList](forecast.list.prefix(10))
-                
-                let imageSingle = tenItems.map { list in
-                    NetworkManager.shared.loadIconImage(icon: list.weather[0].icon)
+        NetworkManager.shared.fetchForeCastAndTenImageData(lat: 37.5, lon: 126.9)
+            .subscribe { weather, data in
+                var image = [UIImage]()
+                data.forEach {
+                    guard let changedData = UIImage(data: $0) else { return }
+                    image.append(changedData)
                 }
                 
-                return Single.zip(imageSingle)
-                    .map { image in
-                        ForecastData(forecastList: tenItems, weatherIcons: image)
-                    }
-            }
-            .subscribe { data in
-                self.output.forecastListCellData.accept(data)
+                var list = [ForecastList](weather.list.prefix(12))
+                list.removeFirst(2)
+                image.removeFirst(2)
                 
+                let result = ForecastData(forecastList: list, weatherIcons: image)
+                self.output.forecastListCellData.accept(result)
             } onFailure: { error in
                 print(error)
             }.disposed(by: disposeBag)
-        
+
     }
     
     private func loadWeatherResponseData() {

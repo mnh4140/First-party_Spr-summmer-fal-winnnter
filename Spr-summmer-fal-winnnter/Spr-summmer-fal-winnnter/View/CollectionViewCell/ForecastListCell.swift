@@ -51,6 +51,12 @@ class ForecastListCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func setFirstCell(data: ForecastList, icon: UIImage) {
+        timeLabel.text = "Now"
+        tempLabel.text = "\(Int(data.main.temp))°C"
+        weatherIcon.image = icon
+    }
+    
     func setCell(data: ForecastList, icon: UIImage) {
         timeLabel.text = self.changeDate(data: data)
         tempLabel.text = "\(Int(data.main.temp))°C"
@@ -60,7 +66,6 @@ class ForecastListCell: UICollectionViewCell {
     private func changeDate(data: ForecastList) -> String {
         let date = data.dtTxt.components(separatedBy: " ")
         guard let hour = Int(String(date[1].prefix(2))) else { return "" }
-//        guard let day = Int(String(date[0].suffix(2))) else { return "" }
         
         if hour > 12 {
             return "\(hour - 12)PM"

@@ -143,8 +143,13 @@ extension MainViewController: UICollectionViewDataSource {
             
             guard let data = self.viewModel.output.forecastListCellData.value else { return cell }
             
-            cell.setCell(data: data.forecastList[indexPath.row],
-                         icon: data.weatherIcons[indexPath.row])
+            if indexPath.row == 0 {
+                cell.setFirstCell(data: data.forecastList[indexPath.row],
+                                  icon: data.weatherIcons[indexPath.row])
+            } else {
+                cell.setCell(data: data.forecastList[indexPath.row],
+                             icon: data.weatherIcons[indexPath.row])
+            }
             
             return cell
         case .tenDayForecast:
