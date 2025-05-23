@@ -65,10 +65,14 @@ extension MainViewController {
                 self?.weatherCollectionView.reloadData()
             }.disposed(by: disposeBag)
         
-        viewModel.output.forecastListCellData
-            .subscribe { [weak self] weather in
-                guard let self else { return }
-                self.weatherCollectionView.reloadData()
+        viewModel.output.tenForecastCellData
+            .subscribe { [weak self] _ in
+                self?.weatherCollectionView.reloadData()
+            }.disposed(by: disposeBag)
+        
+        viewModel.output.allForecastCellData
+            .subscribe { [weak self] _ in
+                self?.weatherCollectionView.reloadData()
             }.disposed(by: disposeBag)
     }
     
@@ -115,8 +119,8 @@ extension MainViewController: UICollectionViewDataSource {
         switch Section(rawValue: section) {
         case .main: return 1
         case .clothes: return 1
-        case .forecastList: return self.viewModel.output.forecastListCellData.value?.forecastList.count ?? 0
-        case .tenDayForecast: return 10
+        case .forecastList: return self.viewModel.output.tenForecastCellData.value?.forecastList.count ?? 0
+        case .tenDayForecast: return self.viewModel.output.allForecastCellData.value?.count ?? 0
         case .none: return 0
         }
     }
@@ -141,7 +145,7 @@ extension MainViewController: UICollectionViewDataSource {
         case .forecastList:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastListCell.identifier, for: indexPath) as? ForecastListCell else { return .init() }
             
-            guard let data = self.viewModel.output.forecastListCellData.value else { return cell }
+            guard let data = self.viewModel.output.tenForecastCellData.value else { return cell }
             
             if indexPath.row == 0 {
                 cell.setFirstCell(data: data.forecastList[indexPath.row],
@@ -155,16 +159,18 @@ extension MainViewController: UICollectionViewDataSource {
         case .tenDayForecast:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TenDayForecastCell.identifier, for: indexPath) as? TenDayForecastCell else { return .init() }
             
+            guard let data = self.viewModel.output.allForecastCellData.value else { return cell }
+            guard let forecast = self.viewModel.output.tenForecastCellData.value else { return cell }
+            
+            cell.setCell(data: data[indexPath.row].forecastList, image: data[indexPath.row].weatherIcons)
+            
             if indexPath.row == 0 {
                 // 첫 번째 셀
-                // cell.setCurrentTemp(data: <#T##ForecastList#>)
-                cell.testFirstCell()
+                cell.setCurrentTemp(data: forecast.forecastList[indexPath.row])
             } else if indexPath.row == 9 {
                 // 마지막 셀
                 cell.deleteSeparator()
             }
-            
-            cell.test()
             
             return cell
         case .none:
