@@ -30,10 +30,12 @@ class LocationNetworkManager {
                     return
                 }
                 
-                guard let response = response as? HTTPURLResponse,
-                      successRange.contains(response.statusCode),
-                      let data = data else {
-                    let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+                guard let response = response as? HTTPURLResponse else { return }
+                
+                guard successRange.contains(response.statusCode) else { return }
+                
+                guard let data = data else {
+                    let statusCode = response.statusCode
                     single(.failure(NSError(domain: "HTTPError", code: statusCode, userInfo: nil)))
                     return
                 }
