@@ -40,7 +40,7 @@ final class SearchResultCell: UITableViewCell {
     }
     
     // 검색 결과 셀 데이터 적용 함수
-    func configure(data: Address) {
+    func configure(data: AddressData.Document.Address) {
         addressLabel.text = data.addressName
     }
 }

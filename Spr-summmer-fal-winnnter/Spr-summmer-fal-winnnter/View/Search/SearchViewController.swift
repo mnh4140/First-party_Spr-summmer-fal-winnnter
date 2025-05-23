@@ -5,7 +5,6 @@
 //  Created by NH on 5/21/25.
 //
 
-import Foundation
 import UIKit
 import SnapKit
 import RxSwift
@@ -19,15 +18,13 @@ final class SearchViewController: UIViewController {
     
     var viewModel = ViewModel()
     
-    let dataRelay = BehaviorRelay<[Address]>(value: [])
+    let dataRelay = BehaviorRelay<[AddressData.Document.Address]>(value: [])
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        setupUI()
-        setContrants()
-        bindSearchBar()
-    }
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//        
+// 
+//    }
     
     private func setupUI() {
         view.backgroundColor = .white
@@ -85,15 +82,20 @@ final class SearchViewController: UIViewController {
             .disposed(by: disposeBag)
     }
 }
+
+extension SearchViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let menuButton = UIBarButtonItem(
             image: UIImage(systemName: "line.3.horizontal"),
-            target: nil,
             style: .plain,
+            target: nil,
             action: nil)
         menuButton.tintColor = .black
         self.navigationItem.leftBarButtonItem = menuButton
-extension SearchViewController {
+        
+        setupUI()
+        setContrants()
+        bindSearchBar()
     }
 }
