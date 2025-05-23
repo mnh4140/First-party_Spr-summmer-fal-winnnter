@@ -30,7 +30,7 @@ final class LocationManager: NSObject {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest // 위치 정밀도 설정 (가장 정확한 값)
     }
 
-    /// 위치 권한 요청 메서드
+    /// - 위치 권한 요청 메서드
     func requestLocation() {
         let status = locationManager.authorizationStatus // 현재 권한 상태 확인
         switch status {
@@ -59,23 +59,9 @@ final class LocationManager: NSObject {
             }
         }
     }
-    
-    func latlogToAddress(location: CLLocation) {
-        // 위도 경도를 주소로 변환
-        geocoder.reverseGeocodeLocation(location) { placemarks, error in
-            if let error = error {
-                self.errorSubject.onNext("주소 변환 실패: \(error.localizedDescription)")
-                return
-            }
-            
-            let coordinate = location.coordinate
-            self.coordinateSubject.onNext(coordinate)
-        }
-    }
 }
 
 extension LocationManager: CLLocationManagerDelegate {
-    /// 위치 업데이트를 받는 delegate 메서드
     /// - 위치 업데이트를 받는 delegate 메서드
     /// - 위치 정보가 업데이트 되면 실행되는 메서드
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -87,8 +73,8 @@ extension LocationManager: CLLocationManagerDelegate {
         
         // 디버깅
         print(location.coordinate.latitude, location.coordinate.longitude)
-
-        latlogToAddress(location: location)
+        
+        self.coordinateSubject.onNext(location.coordinate)
     }
 
     // 위치 요청 실패 시 호출됨
