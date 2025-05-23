@@ -23,19 +23,20 @@ class ViewModel {
             URLQueryItem(name: "query", value: query)
         ]
         
-        guard let url = components?.url else {
-            return Observable.just([])
-        }
+        guard let url = components?.url else { return }
         
         print("검색 결과 최종 요청 URL: \(url)")
         
-        return LocationNetworkManager.shared.fetchData(url: url)
-            .map { (data: AddressData) in
-                return data.documents
-            }
-            .asObservable()
+        LocationNetworkManager.shared.fetchData(url: url)
+            .subscribe(onSuccess: { [weak self] (data:AddressData) in
+                print("카카오 API 응답 : \(data.documents)")
+                self?.fetchAddressRelay.accept(data.documents)
+            }, onFailure: { error in
+                print("에러 발생: \(error.localizedDescription)")
+            }).disposed(by: disposeBag)
     }
     
+    /// - 위도 경도 값을 주소로 변환
     func fetchRegionCode(longitude: String, latitude: String) {
         var components = URLComponents(string: "https://dapi.kakao.com/v2/local/geo/coord2regioncode")
         components?.queryItems = [
@@ -43,12 +44,9 @@ class ViewModel {
             URLQueryItem(name: "y", value: latitude)
         ]
         
-        guard let url = components?.url else {
-            return
-        }
+        guard let url = components?.url else { return }
         
         print("검색 결과 최종 요청 URL: \(url)")
-        
 
         LocationNetworkManager.shared.fetchData(url: url)
             .subscribe(onSuccess: { [weak self] (data:RegionCodeResponse) in
@@ -56,7 +54,6 @@ class ViewModel {
                 self?.regionCodeRelay.accept(data.documents)
             }, onFailure: { error in
                 print("에러 발생: \(error.localizedDescription)")
-            })
-            .disposed(by: disposeBag)
+            }).disposed(by: disposeBag)
     }
 }
