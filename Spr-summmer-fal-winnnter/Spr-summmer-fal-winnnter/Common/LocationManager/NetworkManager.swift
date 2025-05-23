@@ -1,0 +1,53 @@
+//
+//  network.swift
+//  Spr-summmer-fal-winnnter
+//
+//  Created by NH on 5/22/25.
+//
+
+import Foundation
+import RxSwift
+
+class NetworkManager {
+    static let shared = NetworkManager()
+    private init() {}
+    
+    private let apiKey = "737335414faed8edaaa51e0badb4fb08"
+
+    func fetchData<T: Decodable>(url: URL) -> Single<T> {
+        return Single.create { single in
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.allHTTPHeaderFields = [
+                "Authorization": "KakaoAK \(self.apiKey)"
+            ]
+            
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                let successRange = 200..<300
+                
+                if let error = error {
+                    single(.failure(error))
+                    return
+                }
+                
+                guard let response = response as? HTTPURLResponse,
+                      successRange.contains(response.statusCode),
+                      let data = data else {
+                    let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
+                    single(.failure(NSError(domain: "HTTPError", code: statusCode, userInfo: nil)))
+                    return
+                }
+                
+                do {
+                    let decoded = try JSONDecoder().decode(T.self, from: data)
+                    single(.success(decoded))
+                } catch {
+                    single(.failure(error))
+                }
+            }
+            
+            task.resume()
+            return Disposables.create { task.cancel() }
+        }
+    }
+}
