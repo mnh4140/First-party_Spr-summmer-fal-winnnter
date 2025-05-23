@@ -102,14 +102,38 @@ class NetworkManager {
         }
     }
     
-    // 날씨 아이콘을 불러오는 함수
-    func loadIconImage(icon: String) -> Single<UIImage> {
+    // weatherForecast 와 icon image Data 배열 10개를 방출하는 함수
+    func fetchForeCastAndTenImageData(lat: Double, lon: Double) -> Single<(WeatherForecast, [Data])> {
+        return fetchForeCastData(lat: lat, lon: lon)
+            .flatMap { weatherForecast in
+                
+                // 예보에서 아이콘 코드 최대 10개 추출
+                let iconIds = weatherForecast.list.prefix(10).compactMap { $0.weather.first?.icon }
+                
+                // 각 아이콘 코드로부터 이미지 데이터 다운로드 요청 Single 배열
+                let imageSingles = iconIds.map { iconIds in
+                    return self.fetchIconImageData(iconIds: iconIds)
+                }
+                
+                // 모든 이미지 데이터 다운로드 완료 후 결과 결합
+                return Single.zip(imageSingles) { imageDatas in
+                    return (weatherForecast, imageDatas)
+                }
+            }
+    }
+    
+    // 날씨 아이콘을 불러오는 함수 - Data를 반환
+    func fetchIconImageData(iconIds: String) -> Single<Data> {
         return Single.create { single in
-            let imageUrl = "https://openweathermap.org/img/wn/\(icon)@2x.png"
+            let imageUrl = "https://openweathermap.org/img/wn/\(iconIds)@2x.png"
             
+            // alamofire을 이용해서 request 후 성공시 받은 response에서 data를 방출
             AF.request(imageUrl).responseData { response in
-                if let data = response.data, let image = UIImage(data: data) {
-                    single(.success(image))
+                switch response.result {
+                case .success(let data):
+                    single(.success(data)) // 성공시
+                case .failure(let error):
+                    single(.failure(error)) // 실패시
                 }
             }
             
