@@ -10,6 +10,7 @@ import Foundation
 import RxSwift
 import RxRelay
 import SideMenu
+import Alamofire
 
 class MainViewModel {
     
@@ -19,6 +20,7 @@ class MainViewModel {
     
     struct Output {
         let showSettingMenu = PublishRelay<Void>()
+        let mainCellOutput = BehaviorRelay<WeatherResponse?>(value: nil)
     }
     
     private let disposeBag = DisposeBag()
@@ -29,6 +31,7 @@ class MainViewModel {
     init() {
         transform()
         setUpSideMenuNavigationVC()
+        loadWeatherResponseData()
     }
     
     private func transform() {
@@ -42,6 +45,25 @@ class MainViewModel {
         })
             .disposed(by: disposeBag)
     }
+    
+    private func loadWeatherResponseData() {
+        NetworkManager.shared.fetchCurrentWeatherData(lat: 37.496414, lon: 126.959136)
+            .subscribe { [weak self] (weather, imageURL) in
+                guard let self else { return }
+                self.output.mainCellOutput.accept(weather)
+            } onFailure: { error in
+                print(error)
+            }.disposed(by: disposeBag)
+
+    }
+    
+//    private func loadImage(imageUrl: String) {
+//        AF.request(imageUrl).responseData { [weak self] response in
+//            if let self, let data = response.data, let image = UIImage(data: data) {
+//                self.output.mainCellImageOutput.accept(image)
+//            }
+//        }
+//    }
     
     func showSettingMenu(on vc: UIViewController) {
         guard let sideMenu = SideMenuManager.default.leftMenuNavigationController else { return }

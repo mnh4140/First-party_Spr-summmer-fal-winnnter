@@ -59,6 +59,11 @@ extension MainViewController {
                 guard let self else { return }
                 self.viewModel.showSettingMenu(on: self)
             }.disposed(by: disposeBag)
+        
+        viewModel.output.mainCellOutput
+            .subscribe { [weak self] _ in
+                self?.weatherCollectionView.reloadData()
+            }.disposed(by: disposeBag)
     }
     
     private func inputBind() {
@@ -116,7 +121,9 @@ extension MainViewController: UICollectionViewDataSource {
         case .main:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCell.identifier, for: indexPath) as? MainCell else { return .init() }
             
-            cell.test()
+            if let weather = viewModel.output.mainCellOutput.value {
+                cell.setText(weather: weather)
+            }
             
             return cell
         case .clothes:
