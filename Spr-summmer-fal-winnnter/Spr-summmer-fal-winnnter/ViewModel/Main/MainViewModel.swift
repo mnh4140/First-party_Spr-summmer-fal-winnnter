@@ -20,7 +20,13 @@ class MainViewModel {
     
     struct Output {
         let showSettingMenu = PublishRelay<Void>()
-        let mainCellOutput = BehaviorRelay<WeatherResponse?>(value: nil)
+        let mainCellData = BehaviorRelay<WeatherResponse?>(value: nil)
+        let forecastListCellData = BehaviorRelay<ForecastData?>(value: nil)
+    }
+    
+    struct ForecastData {
+        let forecastList: [ForecastList]
+        let weatherIcons: [UIImage]
     }
     
     private let disposeBag = DisposeBag()
@@ -32,6 +38,7 @@ class MainViewModel {
         transform()
         setUpSideMenuNavigationVC()
         loadWeatherResponseData()
+        loadForecastListData()
     }
     
     private func transform() {
@@ -42,28 +49,41 @@ class MainViewModel {
             case .settingButtonTap:
                 output.showSettingMenu.accept(())
             }
-        })
-            .disposed(by: disposeBag)
+        }).disposed(by: disposeBag)
     }
     
-    private func loadWeatherResponseData() {
-        NetworkManager.shared.fetchCurrentWeatherData(lat: 37.496414, lon: 126.959136)
-            .subscribe { [weak self] (weather, imageURL) in
-                guard let self else { return }
-                self.output.mainCellOutput.accept(weather)
+    private func loadForecastListData() {
+        NetworkManager.shared.fetchForeCastData(lat: 37.5, lon: 126.9)
+            .flatMap { forecast in
+                let tenItems = [ForecastList](forecast.list.prefix(10))
+                
+                let imageSingle = tenItems.map { list in
+                    NetworkManager.shared.loadIconImage(icon: list.weather[0].icon)
+                }
+                
+                return Single.zip(imageSingle)
+                    .map { image in
+                        ForecastData(forecastList: tenItems, weatherIcons: image)
+                    }
+            }
+            .subscribe { data in
+                self.output.forecastListCellData.accept(data)
+                
             } onFailure: { error in
                 print(error)
             }.disposed(by: disposeBag)
-
+        
     }
     
-//    private func loadImage(imageUrl: String) {
-//        AF.request(imageUrl).responseData { [weak self] response in
-//            if let self, let data = response.data, let image = UIImage(data: data) {
-//                self.output.mainCellImageOutput.accept(image)
-//            }
-//        }
-//    }
+    private func loadWeatherResponseData() {
+        NetworkManager.shared.fetchCurrentWeatherData(lat: 37.5, lon: 126.9)
+            .subscribe { [weak self] (weather, imageURL) in
+                guard let self else { return }
+                self.output.mainCellData.accept(weather)
+            } onFailure: { error in
+                print(error)
+            }.disposed(by: disposeBag)
+    }
     
     func showSettingMenu(on vc: UIViewController) {
         guard let sideMenu = SideMenuManager.default.leftMenuNavigationController else { return }

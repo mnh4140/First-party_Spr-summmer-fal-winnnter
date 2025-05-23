@@ -51,10 +51,21 @@ class ForecastListCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func test() {
-        timeLabel.text = "Now"
-        tempLabel.text = "0'"
-        weatherIcon.backgroundColor = .white
+    func setCell(data: ForecastList, icon: UIImage) {
+        timeLabel.text = self.changeDate(data: data)
+        tempLabel.text = "\(Int(data.main.temp))°C"
+        weatherIcon.image = icon
+    }
+    
+    private func changeDate(data: ForecastList) -> String {
+        let date = data.dtTxt.components(separatedBy: " ")
+        guard let hour = Int(String(date[1].prefix(2))) else { return "" }
+        
+        if hour > 12 {
+            return "\(hour - 12)PM"
+        } else {
+            return "\(hour)AM"
+        }
     }
     
     private func setupUI() {
@@ -66,7 +77,7 @@ class ForecastListCell: UICollectionViewCell {
         
         timeLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(8)
+            $0.top.equalToSuperview().inset(4)
         }
         
         weatherIcon.snp.makeConstraints {
@@ -75,7 +86,7 @@ class ForecastListCell: UICollectionViewCell {
         
         stackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(8)
+            $0.bottom.equalToSuperview().inset(4)
         }
     }
 }
