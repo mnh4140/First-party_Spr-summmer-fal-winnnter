@@ -50,8 +50,9 @@ class ViewModel {
 
         LocationNetworkManager.shared.fetchData(url: url)
             .subscribe(onSuccess: { [weak self] (data:RegionCodeResponse) in
-                print("카카오 API 응답: \(data.documents)")
+                //print("카카오 API 응답: \(data.documents)")
                 self?.regionCodeRelay.accept(data.documents)
+                print("regionCodeRelay 실행")
             }, onFailure: { error in
                 print("에러 발생: \(error.localizedDescription)")
             }).disposed(by: disposeBag)

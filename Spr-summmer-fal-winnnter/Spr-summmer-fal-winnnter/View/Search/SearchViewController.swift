@@ -77,5 +77,14 @@ final class SearchViewController: UIViewController {
                 cell.configure(data: Address)
             }.disposed(by: disposeBag)
         
+        // 셀 선택 시 해당 모델 출력
+        tableView.rx.modelSelected(AddressData.Document.Address.self)
+            .subscribe(onNext: { selectedAddress in
+                guard let x = selectedAddress.x,
+                      let y = selectedAddress.y else { return }
+                print("선택된 위도: \(x), 경도: \(y)")
+                self.viewModel.fetchRegionCode(longitude: x, latitude: y)
+                self.navigationController?.popViewController(animated: true)
+            }).disposed(by: disposeBag)
     }
 }
