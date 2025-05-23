@@ -11,8 +11,8 @@ import Foundation
 
 class TempProgressBar: UIView {
     
-    private let sysMin: Double = 0
-    private let sysMax: Double = 40
+    private let sysMin: Double = 10
+    private let sysMax: Double = 30
     
     private let backgroundBar: UIView = {
         let view = UIView()
