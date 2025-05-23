@@ -29,7 +29,7 @@ class MainCell: UICollectionViewCell {
         return label
     }()
     
-    private let dustStateLabel: UILabel = {
+    private let weatherLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20)
         label.textColor = .white
@@ -86,24 +86,24 @@ class MainCell: UICollectionViewCell {
     func test() {
         cityLabel.text = "도시"
         tempLabel.text = "19'"
-        dustStateLabel.text = "맑음"
+        weatherLabel.text = "맑음"
         maxTempLabel.text = "27'"
         minTempLabel.text = "19'"
     }
     
     func setText(weather: WeatherResponse) {
         cityLabel.text = weather.name
-        tempLabel.text = "\(weather.main.temp)"
-        dustStateLabel.text = weather.weather[0].main
-        maxTempLabel.text = "\(weather.main.tempMax)"
-        minTempLabel.text = "\(weather.main.tempMin)"
+        tempLabel.text = "\(Int(weather.main.temp))°C"
+        weatherLabel.text = weather.weather[0].main
+        minTempLabel.text = "\(Int(weather.main.tempMin))°C"
+        maxTempLabel.text = "\(Int(weather.main.tempMax))°C"
     }
     
     private func setupUI() {
-        [maxTempLabel, minTempLabel]
+        [minTempLabel, maxTempLabel]
             .forEach { maxMinTempStackView.addArrangedSubview($0) }
         
-        [cityLabel, tempLabel, dustStateLabel, maxMinTempStackView]
+        [cityLabel, tempLabel, weatherLabel, maxMinTempStackView]
             .forEach { stackView.addArrangedSubview($0) }
         
         contentView.addSubview(stackView)
