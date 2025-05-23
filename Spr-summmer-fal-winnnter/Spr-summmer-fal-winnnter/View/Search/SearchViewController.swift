@@ -11,20 +11,22 @@ import RxSwift
 import RxCocoa
 
 final class SearchViewController: UIViewController {
-    var disposeBag = DisposeBag()
-    
+      
     let searchBar = UISearchBar()
     let tableView = UITableView()
     
     var viewModel = ViewModel()
     
     let dataRelay = BehaviorRelay<[AddressData.Document.Address]>(value: [])
+    var disposeBag = DisposeBag()
     
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        
-// 
-//    }
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setupUI()
+        setContrants()
+        bindSearchBar()
+    }
     
     private func setupUI() {
         view.backgroundColor = .white
@@ -52,26 +54,26 @@ final class SearchViewController: UIViewController {
     }
     
     func bindSearchBar() {
+
+        // ViewModel에 검색어 전달
         searchBar.rx.text.orEmpty
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance) // 사용자가 입력을 멈춘 뒤 300ms 후에 다음 작업 실행
             .distinctUntilChanged() // 이전 텍스트와 같으면 무시
             .filter { !$0.isEmpty } // 빈 문자열은 API 요청하지 않도록 필터링
+            .subscribe(onNext: { [weak self] query in
+                    self?.viewModel.fetchAddress(query: query)
+                }).disposed(by: disposeBag)
         
-            // 텍스트가 입력될 때마다 fetchAddress() 호출
-            // flatMapLatest는 사용자가 입력을 계속 바꿀 때, 이전 네트워크 요청을 무시하고 가장 마지막 것만 유지합니다.
-            .flatMapLatest { [weak self] query in
-                self?.viewModel.fetchAddress(query: query) ?? .just([]) // nil 이면, 빈 배열을 하나 방출하고 끝나는 Observable을 대신 반환합니다.
+        // Relay 구독으로 결과 받기
+        viewModel.fetchAddressRelay
+            .map { documents in
+                documents.compactMap { $0.address }
             }
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] documents in
-                let roadAddresses = documents.compactMap { $0.address } // Kakao API 응답에서 .address만 추출해 배열로 만들고
-                self?.dataRelay.accept(roadAddresses) // dataRelay에 저장 → 테이블 뷰가 자동 업데이트됨
-            }, onError: { error in
-                print("검색 에러 발생: \(error)")
-            })
+            .bind(to: dataRelay) // 예: tableView에서 바인딩하는 Relay
             .disposed(by: disposeBag)
         
-        dataRelay
+        // 위에서 방출된 dataRelay 값을 테이블 뷰 셀에 적용하기
+        dataRelay // 주소 검색 결과를 가져오는 릴레이
             // Rx 방식으로 테이블 뷰를 구성
             .bind(to: tableView.rx.items(
                 cellIdentifier: String(describing: SearchResultCell.self),
@@ -80,22 +82,5 @@ final class SearchViewController: UIViewController {
                 cell.configure(data: Address)
             }
             .disposed(by: disposeBag)
-    }
-}
-
-extension SearchViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        let menuButton = UIBarButtonItem(
-            image: UIImage(systemName: "line.3.horizontal"),
-            style: .plain,
-            target: nil,
-            action: nil)
-        menuButton.tintColor = .black
-        self.navigationItem.leftBarButtonItem = menuButton
-        
-        setupUI()
-        setContrants()
-        bindSearchBar()
     }
 }
