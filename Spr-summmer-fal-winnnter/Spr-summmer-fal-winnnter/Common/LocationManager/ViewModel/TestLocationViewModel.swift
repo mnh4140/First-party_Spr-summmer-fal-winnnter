@@ -12,7 +12,10 @@ import RxRelay
 class ViewModel {
     var disposeBag = DisposeBag()
     let fetchAddressRelay = PublishRelay<[AddressData.Document]>() // 주소 -> 위도 경도 가져오기
-    let regionCodeRelay = PublishRelay<[RegionCodeResponse.Document]>() // 위도 경도 -> 주소로 가져오기
+    
+    // 최신 상태(주소)를 UI에서 항상 보여줘야 하기 때문에
+    // 마지막 값을 저장하고 방출할 수 있는 BehaviorRelay로 사용
+    let regionCodeRelay = BehaviorRelay<[RegionCodeResponse.Document]>(value: []) // 위도 경도 -> 주소로 가져오기
     
     /// - 주소를 위도 경도 값으로 변환
     /// - query 값은 검색어

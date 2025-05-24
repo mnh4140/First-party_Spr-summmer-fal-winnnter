@@ -17,6 +17,7 @@ class MainViewController: UIViewController {
     // Property
     private let disposeBag = DisposeBag()
     private let viewModel = MainViewModel()
+    let locationViewModel = ViewModel()
     
     // MARK: - UIProperty
     private lazy var weatherCollectionView: UICollectionView = {
@@ -47,6 +48,9 @@ extension MainViewController {
         setupUI()
         bind()
         inputBind()
+        bindLocationManager()
+        LocationManager.shared.requestLocation()
+        cellSelect()
     }
 }
 
@@ -77,6 +81,34 @@ extension MainViewController {
             guard let self else { return }
             self.viewModel.input.accept(.settingButtonTap)
         }.disposed(by: disposeBag)
+    }
+    
+    /// 메인셀 선택 시, 검색 화면으로 넘어가는 기능
+    func cellSelect() {
+        weatherCollectionView.rx.itemSelected
+            .subscribe(onNext: { indexPath in
+                if MainViewController.Section(rawValue: indexPath.section) == .main {
+                    print("메인 셀이 눌렸습니다.")
+                    let searchVC = SearchViewController()
+                        searchVC.viewModel = self.locationViewModel // 같은 인스턴스 전달
+                    self.navigationController?.pushViewController(searchVC, animated: true)
+                }
+            }).disposed(by: disposeBag)
+    }
+    
+    /// - 위치 관리자에게 사용자의 위도 경도 데이터 받아오는 기능
+    func bindLocationManager() {
+        // LocationManager의 coordinateSubject 구독
+        // 현재 위치 정보가 변경되면 onNext 콜백이 실행
+        // 위도 경도를 받아오고
+        // fetchRegionCode 를 호출하여, 위도 경도를 주소로 변경된 값을 가져옴
+        LocationManager.shared.coordinateSubject
+            .subscribe(onNext: { [weak self] coordinate in
+                let longitude = "\(coordinate.longitude)"
+                let latitude = "\(coordinate.latitude)"
+                self?.locationViewModel.fetchRegionCode(longitude: longitude, latitude: latitude)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func setupUI() {
@@ -130,6 +162,9 @@ extension MainViewController: UICollectionViewDataSource {
             guard let weather = viewModel.output.mainCellData.value else { return cell }
                 
             cell.setText(weather: weather)
+            
+            // 여기서 주소도 전달
+            cell.bindAddress(with: locationViewModel)
             
             return cell
         case .clothes:
