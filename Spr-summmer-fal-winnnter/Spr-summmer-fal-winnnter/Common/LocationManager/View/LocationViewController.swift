@@ -95,6 +95,8 @@ class ViewController: UIViewController {
 
     @objc func didTapLocationButton() {
         LocationManager.shared.requestLocation()
-        navigationController?.pushViewController(SearchViewController(), animated: true)
+        let searchVC = SearchViewController()
+        searchVC.viewModel = self.viewModel // 같은 ViewModel 인스턴스를 전달
+        navigationController?.pushViewController(searchVC, animated: true)
     }
 }
