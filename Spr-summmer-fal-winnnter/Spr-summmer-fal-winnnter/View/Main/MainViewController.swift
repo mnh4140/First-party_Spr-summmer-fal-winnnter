@@ -132,8 +132,10 @@ extension MainViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCell.identifier, for: indexPath) as? MainCell else { return .init() }
             
             guard let weather = viewModel.output.mainCellData.value else { return cell }
+            guard let customForecast = self.viewModel.output.allForecastCellData.value else { return cell }
                 
             cell.setText(weather: weather)
+            cell.setMinMaxTempForDay(temp: customForecast[indexPath.row].forecastList)
             
             return cell
         case .clothes:
