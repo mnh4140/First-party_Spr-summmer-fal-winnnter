@@ -75,6 +75,7 @@ extension LocationManager: CLLocationManagerDelegate {
         // 디버깅
         print(location.coordinate.latitude, location.coordinate.longitude)
         
+        // 현재 좌표를 방출
         self.coordinateSubject.onNext(location.coordinate)
     }
 

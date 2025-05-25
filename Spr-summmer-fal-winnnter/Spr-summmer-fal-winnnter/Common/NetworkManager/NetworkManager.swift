@@ -34,6 +34,15 @@ class NetworkManager {
         ]
     }
     
+    func NOHUNmakeUrlQueryItems(lat: String, lon: String) -> [URLQueryItem] {
+        return [
+            URLQueryItem(name: "lat", value: lat), // 위도
+            URLQueryItem(name: "lon", value: lon), // 경도
+            URLQueryItem(name: "appid", value: apiKey), // apiKey 추가
+            URLQueryItem(name: "units", value: "metric") // 섭씨로 데이터 받기
+        ]
+    }
+    
     // Alamofire를 사용해서 서버 데이터를 불러오는 메서드
     func fetchDataByAlamofire<T: Decodable>(url: URL, completion: @escaping (Result<T, AFError>) -> Void) {
         AF.request(url).responseDecodable(of: T.self) { response in
@@ -46,6 +55,37 @@ class NetworkManager {
         return Single.create { single in
             var urlComponents = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather")
             urlComponents?.queryItems = self.makeUrlQueryItems(lat: lat, lon: lon)
+            
+            guard let url = urlComponents?.url else {
+                print("잘못된 URL")
+                single(.failure(AFError.invalidURL(url: "")))
+                return Disposables.create()
+            }
+            
+            self.fetchDataByAlamofire(url: url) { (result: Result<WeatherResponse, AFError>) in
+                
+                switch result {
+                    
+                    // 네트워크 통신 성공시
+                case .success(let weatherResponse):
+                    let imageUrl = "https://openweathermap.org/img/wn/\(weatherResponse.weather[0].icon)@2x.png"
+                    single(.success((weatherResponse, imageUrl))) // 성공시 날씨 정보와 아이콘 이미지 url을 방출
+                    
+                    // 네트워크 통신 실패시
+                case .failure(let error):
+                    print("데이터 로드 실패: \(error)")
+                    single(.failure(error)) // 실패시 에러 방출
+                }
+            }
+            return Disposables.create() // Single 종료
+        }
+    }
+    
+    // 서버에서 현재 날씨를 받아오는 메서드
+    func NOHUNfetchCurrentWeatherData(lat: String, lon: String) -> Single<(WeatherResponse, String)> {
+        return Single.create { single in
+            var urlComponents = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather")
+            urlComponents?.queryItems = self.NOHUNmakeUrlQueryItems(lat: lat, lon: lon)
             
             guard let url = urlComponents?.url else {
                 print("잘못된 URL")

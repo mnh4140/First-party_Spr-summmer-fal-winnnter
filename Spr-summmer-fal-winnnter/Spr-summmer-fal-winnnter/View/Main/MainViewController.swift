@@ -91,6 +91,7 @@ extension MainViewController {
                     print("메인 셀이 눌렸습니다.")
                     let searchVC = SearchViewController()
                         searchVC.viewModel = self.locationViewModel // 같은 인스턴스 전달
+                    searchVC.mainViewModel = self.viewModel
                     self.navigationController?.pushViewController(searchVC, animated: true)
                 }
             }).disposed(by: disposeBag)
@@ -107,8 +108,15 @@ extension MainViewController {
                 let longitude = "\(coordinate.longitude)"
                 let latitude = "\(coordinate.latitude)"
                 self?.locationViewModel.fetchRegionCode(longitude: longitude, latitude: latitude)
-            })
-            .disposed(by: disposeBag)
+                print("위도 경도는 longitude : \(longitude), latitude : \(latitude)")
+                NetworkManager.shared.NOHUNfetchCurrentWeatherData(lat: latitude, lon: longitude)
+                    .subscribe(onSuccess:  { (weather, imageURL) in
+                        print("불러온 날씨 데이터 : \(weather)")
+                        self?.viewModel.output.mainCellData.accept(weather)
+                    }, onFailure: { error in
+                        print(error)
+                    }).disposed(by: self?.disposeBag ?? DisposeBag())
+            }).disposed(by: disposeBag)
     }
     
     private func setupUI() {
