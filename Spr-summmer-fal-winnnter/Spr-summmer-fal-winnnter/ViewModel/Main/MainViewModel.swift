@@ -91,6 +91,16 @@ class MainViewModel {
         var result = [[ForecastList]]()
         
         switch firstHour {
+        case "18":
+            list.removeFirst()
+            fallthrough
+        case "21":
+            list.removeFirst()
+        default:
+            break
+        }
+        
+        switch String(list[0].dtTxt.components(separatedBy: " ")[1].prefix(2)) {
         case "00":
             box.append(list.removeFirst())
             fallthrough
@@ -114,7 +124,6 @@ class MainViewModel {
             fallthrough
         case "21":
             box.append(list.removeFirst())
-            fallthrough
         default:
             break
         }
