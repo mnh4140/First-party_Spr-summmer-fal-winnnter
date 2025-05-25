@@ -24,14 +24,20 @@ final class LocationManager: NSObject {
     // 좌표 전달 서브젝트
     let coordinateSubject = PublishSubject<CLLocationCoordinate2D>()
 
+    
+    var locationViewModel = ViewModel()
+    
+    
     private override init() {
         super.init()
+        //print("📌 [위치 관리자] LocationManager 초기화")
         locationManager.delegate = self // 위치가 업데이트되면 이 클래스가 콜백 받도록 설정
         locationManager.desiredAccuracy = kCLLocationAccuracyBest // 위치 정밀도 설정 (가장 정확한 값)
     }
 
     /// - 위치 권한 요청 메서드
     func requestLocation() {
+        //print("\t📌 [위치 관리자] requestLocation 호출")
         let status = locationManager.authorizationStatus // 현재 권한 상태 확인
         switch status {
         case .notDetermined: // 아직 사용자에게 권한을 요청하지 않은 상태 → 권한 요청
@@ -48,6 +54,7 @@ final class LocationManager: NSObject {
     /// - 검색 키워드를 위도 경도로 변경하는  함수
     /// - 아직 사용 안하는 함수
     func findAddress(address: String) {
+        //print("\t📌 [위치 관리자] findAddress 호출")
         geocoder.geocodeAddressString(address) { placemarks, error in
             if let error = error {
                 print("지오코딩 실패: \(error)")
@@ -73,7 +80,8 @@ extension LocationManager: CLLocationManagerDelegate {
         }
         
         // 디버깅
-        print(location.coordinate.latitude, location.coordinate.longitude)
+        //print("\t📌 [위치 관리자] 좌표 정보 가져오기 성공")
+        //print("\t\t📌 [위치 관리자] latitude : \(location.coordinate.latitude) longitude : \(location.coordinate.longitude)")
         
         // 현재 좌표를 방출
         self.coordinateSubject.onNext(location.coordinate)
@@ -92,7 +100,7 @@ extension LocationManager: CLLocationManagerDelegate {
         let status = manager.authorizationStatus
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
-            print("권한 허용됨 → 위치 요청 실행")
+            //print("\t📌 [위치 관리자] 권한 허용됨 → 위치 요청 실행")
             manager.requestLocation() // 위치 정보 요청
         case .denied, .restricted:
             errorSubject.onNext("위치 권한이 거부되었습니다.")

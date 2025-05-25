@@ -16,7 +16,7 @@ final class SearchViewController: UIViewController {
     let tableView = UITableView()
     
     var viewModel = ViewModel()
-    var mainViewModel = MainViewModel()
+    lazy var mainViewModel = MainViewModel(locationViewModel: viewModel)
     
     let dataRelay = BehaviorRelay<[AddressData.Document.Address]>(value: [])
     var disposeBag = DisposeBag()
@@ -87,11 +87,17 @@ final class SearchViewController: UIViewController {
                 self.viewModel.fetchRegionCode(longitude: x, latitude: y)
                 NetworkManager.shared.NOHUNfetchCurrentWeatherData(lat: y, lon: x)
                     .subscribe(onSuccess:  { [weak self] (weather, imageURL) in
-                        print("불러온 날씨 데이터 : \n\(weather)")
+                        //print("불러온 날씨 데이터 : \n\(weather)")
                         self?.mainViewModel.output.mainCellData.accept(weather)
                     }, onFailure: { error in
                         print(error)
                     }).disposed(by: self.disposeBag)
+                
+                // ddd
+                self.mainViewModel.latitude = "\(y)"
+                self.mainViewModel.longitude = "\(x)"
+                self.mainViewModel.input.accept(.changeCoordinate)
+                
                 self.navigationController?.popViewController(animated: true)
             }).disposed(by: disposeBag)
     }
