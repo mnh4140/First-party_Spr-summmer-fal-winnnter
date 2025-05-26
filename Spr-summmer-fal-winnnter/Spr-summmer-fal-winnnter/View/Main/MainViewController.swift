@@ -357,7 +357,7 @@ extension MainViewController: UICollectionViewDataSource {
             subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
+        section.contentInsets = .init(top: 10, leading: 40, bottom: 10, trailing: 40)
         
         let decorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "section-background-element-kind")
         
