@@ -18,6 +18,7 @@ class MainViewModel {
         case settingButtonTap
         case changeCoordinate
         case searchAddressData(AddressData.Document.Address)
+        case setUnitButtonTap(Int)
     }
     
     struct Output {
@@ -44,11 +45,13 @@ class MainViewModel {
     private var customForecastDatas = [CustomForecastData]()
     private let disposeBag = DisposeBag()
     
+    let tempUnit = BehaviorRelay<Int>(value: 0) // 초기값은 0 : °C
+    
     let input = PublishRelay<Input>()
     let output = Output()
     
-    var latitude: String = ""
-    var longitude: String = ""
+    let latitude = BehaviorRelay<String>(value: "37.56")
+    let longitude = BehaviorRelay<String>(value: "127.4")
     
     let locationViewModel: ViewModel
     
@@ -70,7 +73,7 @@ class MainViewModel {
                 case .settingButtonTap:
                     output.showSettingMenu.accept(())
                 case .changeCoordinate:
-                    self.locationViewModel.fetchRegionCode(longitude: self.longitude, latitude: self.latitude)
+                    self.locationViewModel.fetchRegionCode(longitude: longitude.value, latitude: latitude.value)
                     self.loadWeatherResponseData()
                     self.loadForecastListData()
                 case .searchAddressData(let selectedAddress):
@@ -78,7 +81,7 @@ class MainViewModel {
                           let y = selectedAddress.y else { return }
                     self.locationViewModel.fetchRegionCode(longitude: x, latitude: y)
                     // 현재 날씨 데이터를 가져오는 로직
-                    NetworkManager.shared.fetchCurrentWeatherData(lat: y, lon: x)
+                    NetworkManager.shared.fetchCurrentWeatherData(lat: y, lon: x, tempUnit: tempUnit.value)
                         .subscribe(onSuccess:  { [weak self] (weather, imageURL) in
                             //print("불러온 날씨 데이터 : \n\(weather)")
                             self?.output.mainCellData.accept(weather)
@@ -87,9 +90,17 @@ class MainViewModel {
                         }).disposed(by: self.disposeBag)
                     
                     // 뷰모델에 위도 경도 값 주입
-                    self.latitude = "\(y)"
-                    self.longitude = "\(x)"
+                    self.latitude.accept(y)
+                    self.longitude.accept(x)
+                    print("위도 경도 \(self.latitude.value), \(self.longitude.value)")
                     self.input.accept(.changeCoordinate)
+                case .setUnitButtonTap(let unit):
+                    self.tempUnit.accept(unit)
+                    print(unit)
+                    print(latitude.value, longitude.value)
+                    self.loadWeatherResponseData()
+                    self.loadForecastListData()
+                    
                 }
             }).disposed(by: disposeBag)
     }
@@ -246,10 +257,10 @@ class MainViewModel {
     
     // WeatherResponse 모델의 정보를 받아오는 메서드 loadForecastListData
     private func loadForecastListData() {
-        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude, lon: longitude)
+        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude.value, lon: longitude.value, tempUnit: tempUnit.value)
             .subscribe(onSuccess: { [weak self] weather, data in
                 guard let self else { return }
-//                print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
+                // print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
 
                 var image = [UIImage]()
                 data.forEach {
@@ -276,7 +287,7 @@ class MainViewModel {
     }
     
     private func loadWeatherResponseData() {
-        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
+        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude.value, lon: longitude.value, tempUnit: tempUnit.value)
             .subscribe { [weak self] (weather, imageURL) in
                 guard let self else { return }
                 self.output.mainCellData.accept(weather)
@@ -303,7 +314,11 @@ class MainViewModel {
     
     // 세팅 뷰 사이드메뉴 라이브러리 설정
     private func setUpSideMenuNavigationVC() {
-        let menuNavVC = SideMenuNavigationController(rootViewController: SettingsViewController())
+        let settingViewController = SettingsViewController()
+        settingViewController.viewModel = self
+        
+        let menuNavVC = SideMenuNavigationController(rootViewController: settingViewController)
+        
         
         menuNavVC.menuWidth = UIScreen.main.bounds.width * 0.7
         menuNavVC.presentationStyle = .menuSlideIn

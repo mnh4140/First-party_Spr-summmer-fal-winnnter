@@ -104,6 +104,11 @@ extension MainViewController {
                 self?.weatherCollectionView.reloadData()
 
             }.disposed(by: disposeBag)
+        
+        viewModel.tempUnit
+            .subscribe { [weak self] _ in
+                self?.weatherCollectionView.reloadData()
+            }.disposed(by: disposeBag)
     }
     
     // MainViewModel에게 Input을 보내는 메서드
@@ -125,8 +130,10 @@ extension MainViewController {
         LocationManager.shared.coordinateSubject
             .subscribe { [weak self] coordinate in
                 guard let self else { return }
-                self.viewModel.latitude = "\(coordinate.latitude)"
-                self.viewModel.longitude = "\(coordinate.longitude)"
+//                self.viewModel.latitude = "\(coordinate.latitude)"
+//                self.viewModel.longitude = "\(coordinate.longitude)"
+                self.viewModel.latitude.accept("\(coordinate.latitude)")
+                self.viewModel.longitude.accept("\(coordinate.longitude)")
                 self.viewModel.input.accept(.changeCoordinate)
                 //print("\t\t🌆 [메인 뷰컨] 좌표 변경 감지")
             }.disposed(by: disposeBag)
@@ -227,9 +234,10 @@ extension MainViewController: UICollectionViewDataSource {
             
             guard let weather = viewModel.output.mainCellData.value else { return cell }
             guard let customForecast = self.viewModel.output.customForecastData.value else { return cell }
-                
-            cell.setText(weather: weather)
-            cell.setMinMaxTempForDay(temp: customForecast[indexPath.row].forecastList)
+            
+            
+            cell.setText(weather: weather, tempUnit: self.viewModel.tempUnit.value)
+            cell.setMinMaxTempForDay(temp: customForecast[indexPath.row].forecastList, tempUnit: self.viewModel.tempUnit.value)
             
             // 여기서 주소도 전달
             cell.bindAddress(with: locationViewModel)
