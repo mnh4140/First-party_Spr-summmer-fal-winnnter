@@ -259,10 +259,10 @@ extension MainViewController: UICollectionViewDataSource {
             
             if indexPath.row == 0 {
                 cell.setFirstCell(data: data.forecastList[indexPath.row],
-                                  icon: data.weatherIcons[indexPath.row])
+                                  icon: data.weatherIcons[indexPath.row], tempUnit: self.viewModel.tempUnit.value)
             } else {
                 cell.setCell(data: data.forecastList[indexPath.row],
-                             icon: data.weatherIcons[indexPath.row])
+                             icon: data.weatherIcons[indexPath.row], tempUnit: self.viewModel.tempUnit.value)
             }
             
             return cell
@@ -274,7 +274,7 @@ extension MainViewController: UICollectionViewDataSource {
             
             cell.setCell(currentTemp: currentTemp,
                          data: customData[indexPath.row].forecastList,
-                         image: customData[indexPath.row].weatherIcons)
+                         image: customData[indexPath.row].weatherIcons, tempUnit: self.viewModel.tempUnit.value)
             
             if indexPath.row == 0 {
                 // 첫 번째 셀
