@@ -16,12 +16,15 @@ class MainViewModel {
     
     enum Input {
         case settingButtonTap
+        case searchButtonTap
         case changeCoordinate
         case searchAddressData(AddressData.Document.Address)
     }
     
     struct Output {
         let showSettingMenu = PublishRelay<Void>()
+        let showSearchView = PublishRelay<Void>()
+        
         let mainCellData = BehaviorRelay<WeatherResponse?>(value: nil)
 
         let tenDayForecastCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
@@ -62,13 +65,19 @@ class MainViewModel {
     // 들어온 Input을 Output으로 변환하는 메서드
     private func transform() {
         self.input
+            // 바인트에서 subscribe 바꾼거 트라블슈팅 넣어야됨
             //.bind(onNext: { [weak self] input in
+        
+            // 재진입 문제를 해결하기 위해 이벤트를 비동기적으로 전달하도록 처리
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] input in
                 guard let self else { return }
                 
                 switch input {
                 case .settingButtonTap:
                     output.showSettingMenu.accept(())
+                case .searchButtonTap:
+                    output.showSearchView.accept(())
                 case .changeCoordinate:
                     self.locationViewModel.fetchRegionCode(longitude: self.longitude, latitude: self.latitude)
                     self.loadWeatherResponseData()
@@ -89,36 +98,45 @@ class MainViewModel {
                     // 뷰모델에 위도 경도 값 주입
                     self.latitude = "\(y)"
                     self.longitude = "\(x)"
+                    
+                    // 인풋 안에 인풋
+                    // RxSwift 공식 가이드는, 재진입 문제를 피하려면 Observable이 이벤트를 비동기적으로 전달하도록 처리하라고 권장
                     self.input.accept(.changeCoordinate)
                 }
             }).disposed(by: disposeBag)
     }
     
     // WeatherForecast 모델의 정보를 받아와 필요한 곳으로 보내는 메서드
-//    private func loadForecastListData() {
-//        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude, lon: longitude)
-//            .subscribe { weather, data in
-//                var image = [UIImage]()
-//                data.forEach {
-//                    guard let changedData = UIImage(data: $0) else { return }
-//                    image.append(changedData)
-//                }
-//                
-//                self.transformForecastListData(data: weather.list)
-//                
-//                image = [UIImage](image.prefix(12))
-//                var list = [ForecastList](weather.list.prefix(12))
-//                
-//                list.removeFirst(2)
-//                image.removeFirst(2)
-//                
-//                let tenResult = tenDayForecastData(forecastList: list, weatherIcons: image)
-//                self.output.tenDayForecastCellData.accept(tenResult)
-//            } onFailure: { error in
-//                print(error)
-//            }.disposed(by: disposeBag)
-//
-//    }
+    // WeatherResponse 모델의 정보를 받아오는 메서드 loadForecastListData
+    private func loadForecastListData() {
+        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude, lon: longitude)
+            .subscribe(onSuccess: { [weak self] weather, data in
+                guard let self else { return }
+//                print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
+
+                var image = [UIImage]()
+                data.forEach {
+                    if let changedData = UIImage(data: $0) {
+                        image.append(changedData)
+                    }
+                }
+                
+                self.transformForecastListData(data: weather.list)
+
+                var list = [ForecastList](weather.list.prefix(12))
+                image = [UIImage](image.prefix(12))
+
+                if list.count >= 2 { list.removeFirst(2) }
+                if image.count >= 2 { image.removeFirst(2) }
+
+                let result = tenDayForecastData(forecastList: list, weatherIcons: image)
+                self.output.NOHUNforecastListCellData.accept(result)
+
+            }, onFailure: { error in
+                print("loadForecastListData forecast 로딩 실패: \(error)")
+            })
+            .disposed(by: disposeBag)
+    }
     
     // ForecastList의 데이터를 CustomForecastList로 변환하는 메서드
     private func transformForecastListData(data: [ForecastList]) {
@@ -244,36 +262,7 @@ class MainViewModel {
 
     }
     
-    // WeatherResponse 모델의 정보를 받아오는 메서드 loadForecastListData
-    private func loadForecastListData() {
-        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude, lon: longitude)
-            .subscribe(onSuccess: { [weak self] weather, data in
-                guard let self else { return }
-//                print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
-
-                var image = [UIImage]()
-                data.forEach {
-                    if let changedData = UIImage(data: $0) {
-                        image.append(changedData)
-                    }
-                }
-                
-                self.transformForecastListData(data: weather.list)
-
-                var list = [ForecastList](weather.list.prefix(12))
-                image = [UIImage](image.prefix(12))
-
-                if list.count >= 2 { list.removeFirst(2) }
-                if image.count >= 2 { image.removeFirst(2) }
-
-                let result = tenDayForecastData(forecastList: list, weatherIcons: image)
-                self.output.NOHUNforecastListCellData.accept(result)
-
-            }, onFailure: { error in
-                print("loadForecastListData forecast 로딩 실패: \(error)")
-            })
-            .disposed(by: disposeBag)
-    }
+    
     
     private func loadWeatherResponseData() {
         NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
@@ -310,4 +299,6 @@ class MainViewModel {
         SideMenuManager.default.leftMenuNavigationController = menuNavVC
 //           SideMenuManager.default.leftMenuNavigationController?.setNavigationBarHidden(true, animated: true)
     }
+    
+    //func show
 }
