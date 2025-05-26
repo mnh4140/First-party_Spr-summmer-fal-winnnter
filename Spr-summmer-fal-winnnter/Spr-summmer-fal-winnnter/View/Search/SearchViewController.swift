@@ -15,11 +15,21 @@ final class SearchViewController: UIViewController {
     let searchBar = UISearchBar()
     let tableView = UITableView()
     
-    var viewModel = ViewModel()
-    lazy var mainViewModel = MainViewModel(locationViewModel: viewModel)
+    private let viewModel: ViewModel
+    private let mainViewModel: MainViewModel
     
     let dataRelay = BehaviorRelay<[AddressData.Document.Address]>(value: [])
     var disposeBag = DisposeBag()
+    
+    init(viewModel: ViewModel, mainViewModel: MainViewModel) {
+        self.viewModel = viewModel
+        self.mainViewModel = mainViewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
