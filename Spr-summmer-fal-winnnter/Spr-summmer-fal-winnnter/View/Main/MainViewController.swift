@@ -228,7 +228,6 @@ extension MainViewController: UICollectionViewDataSource {
             guard let weather = viewModel.output.mainCellData.value else { return cell }
             guard let customForecast = self.viewModel.output.customForecastData.value else { return cell }
             
-            
             cell.setText(weather: weather, tempUnit: self.viewModel.tempUnit.value)
             cell.setMinMaxTempForDay(temp: customForecast[indexPath.row].forecastList, tempUnit: self.viewModel.tempUnit.value)
             
@@ -247,13 +246,8 @@ extension MainViewController: UICollectionViewDataSource {
             
             guard let data = self.viewModel.output.NOHUNforecastListCellData.value else { return cell }
             
-            if indexPath.row == 0 {
-                cell.setFirstCell(data: data.forecastList[indexPath.row],
-                                  icon: data.weatherIcons[indexPath.row], tempUnit: self.viewModel.tempUnit.value)
-            } else {
                 cell.setCell(data: data.forecastList[indexPath.row],
                              icon: data.weatherIcons[indexPath.row], tempUnit: self.viewModel.tempUnit.value)
-            }
             
             return cell
         case .tenDayForecast:

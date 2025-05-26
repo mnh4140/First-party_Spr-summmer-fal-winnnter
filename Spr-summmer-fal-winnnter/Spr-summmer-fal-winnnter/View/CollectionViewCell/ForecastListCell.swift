@@ -51,13 +51,6 @@ class ForecastListCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setFirstCell(data: ForecastList, icon: UIImage, tempUnit: Int) {
-        timeLabel.text = "Now"
-        let tempResult = tempUnit == 0 ? "°C" : "°F"
-        tempLabel.text = "\(Int(data.main.temp))" + tempResult
-        weatherIcon.image = icon
-    }
-    
     func setCell(data: ForecastList, icon: UIImage, tempUnit: Int) {
         timeLabel.text = self.changeDate(data: data)
         let tempResult = tempUnit == 0 ? "°C" : "°F"
