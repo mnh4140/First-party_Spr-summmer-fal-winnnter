@@ -21,11 +21,11 @@ class MainViewModel {
     struct Output {
         let showSettingMenu = PublishRelay<Void>()
         let mainCellData = BehaviorRelay<WeatherResponse?>(value: nil)
-        let tenForecastCellData = BehaviorRelay<TenForecastData?>(value: nil)
-        let allForecastCellData = BehaviorRelay<[AllForecastData]?>(value: nil)
+        let tenForecastCellData = BehaviorRelay<CustomForecastData?>(value: nil)
+        let customForecastCellData = BehaviorRelay<[AllForecastData]?>(value: nil)
     }
     
-    struct TenForecastData {
+    struct CustomForecastData {
         let forecastList: [ForecastList]
         let weatherIcons: [UIImage]
     }
@@ -48,6 +48,7 @@ class MainViewModel {
         loadForecastListData()
     }
     
+    // 들어온 Input을 Output으로 변환하는 메서드
     private func transform() {
         self.input.bind(onNext: { [weak self] input in
             guard let self else { return }
@@ -59,6 +60,7 @@ class MainViewModel {
         }).disposed(by: disposeBag)
     }
     
+    // WeatherForecast 모델의 정보를 받아와 필요한 곳으로 보내는 메서드
     private func loadForecastListData() {
         NetworkManager.shared.fetchForeCastAndTenImageData(lat: 37.5, lon: 126.9)
             .subscribe { weather, data in
@@ -76,7 +78,7 @@ class MainViewModel {
                 list.removeFirst(2)
                 image.removeFirst(2)
                 
-                let tenResult = TenForecastData(forecastList: list, weatherIcons: image)
+                let tenResult = CustomForecastData(forecastList: list, weatherIcons: image)
                 self.output.tenForecastCellData.accept(tenResult)
             } onFailure: { error in
                 print(error)
@@ -84,6 +86,7 @@ class MainViewModel {
 
     }
     
+    // ForecastList의 데이터를 CustomForecastList로 변환하는 메서드
     private func transformForecastListData(data: [ForecastList]) {
         let firstHour = String(data[0].dtTxt.components(separatedBy: " ")[1].prefix(2))
         var list = data
@@ -165,6 +168,7 @@ class MainViewModel {
         
     }
     
+    // CustomForecastList의 데이터 중 Icon을 받아오는 메서드
     private func fetchCustomForecastListIcon(data: CustomForecastList) {
         let customForecast = Single<CustomForecastList>.just(data)
         let icon = NetworkManager.shared.fetchIconImageData(iconIds: data.icon)
@@ -174,7 +178,7 @@ class MainViewModel {
                 guard let image = UIImage(data: data) else { return }
                 self.customForecastDatas.append(AllForecastData(forecastList: custom, weatherIcons: image))
                 if self.customForecastDatas.count == 5 {
-                    self.output.allForecastCellData.accept(self.customForecastDatas)
+                    self.output.customForecastCellData.accept(self.customForecastDatas)
                 }
             } onFailure: { error in
                 print(error)
@@ -182,6 +186,7 @@ class MainViewModel {
 
     }
     
+    // WeatherResponse 모델의 정보를 받아오는 메서드
     private func loadWeatherResponseData() {
         NetworkManager.shared.fetchCurrentWeatherData(lat: 37.5, lon: 126.9)
             .subscribe { [weak self] (weather, imageURL) in
@@ -192,11 +197,13 @@ class MainViewModel {
             }.disposed(by: disposeBag)
     }
     
+    // 세팅 버튼을 클릭하면 세팅 뷰를 띄워주는 메서드
     func showSettingMenu(on vc: UIViewController) {
         guard let sideMenu = SideMenuManager.default.leftMenuNavigationController else { return }
         vc.present(sideMenu, animated: true)
     }
     
+    // 세팅 뷰 사이드메뉴 라이브러리 설정
     private func setUpSideMenuNavigationVC() {
         let menuNavVC = SideMenuNavigationController(rootViewController: SettingsViewController())
         
