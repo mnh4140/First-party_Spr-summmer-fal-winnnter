@@ -115,38 +115,6 @@ class MainViewModel {
             }).disposed(by: disposeBag)
     }
     
-    // WeatherForecast 모델의 정보를 받아와 필요한 곳으로 보내는 메서드
-    // WeatherResponse 모델의 정보를 받아오는 메서드 loadForecastListData
-    private func loadForecastListData() {
-        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude, lon: longitude)
-            .subscribe(onSuccess: { [weak self] weather, data in
-                guard let self else { return }
-//                print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
-
-                var image = [UIImage]()
-                data.forEach {
-                    if let changedData = UIImage(data: $0) {
-                        image.append(changedData)
-                    }
-                }
-                
-                self.transformForecastListData(data: weather.list)
-
-                var list = [ForecastList](weather.list.prefix(12))
-                image = [UIImage](image.prefix(12))
-
-                if list.count >= 2 { list.removeFirst(2) }
-                if image.count >= 2 { image.removeFirst(2) }
-
-                let result = tenDayForecastData(forecastList: list, weatherIcons: image)
-                self.output.NOHUNforecastListCellData.accept(result)
-
-            }, onFailure: { error in
-                print("loadForecastListData forecast 로딩 실패: \(error)")
-            })
-            .disposed(by: disposeBag)
-    }
-    
     // ForecastList의 데이터를 CustomForecastList로 변환하는 메서드
     private func transformForecastListData(data: [ForecastList]) {
         var list = data                 // removeFirst 메서드를 사용하기 위해 변수 생성
