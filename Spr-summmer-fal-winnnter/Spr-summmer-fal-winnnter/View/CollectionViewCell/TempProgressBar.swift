@@ -9,8 +9,11 @@ import UIKit
 import SnapKit
 import Foundation
 
+// MARK: - TempProgressBar
+// tenDayForecastCell의 온도 그래프 커스텀
 class TempProgressBar: UIView {
     
+    // 그래프 기준 온도
     private let sysMin: Double = 10
     private let sysMax: Double = 30
     
@@ -61,6 +64,7 @@ class TempProgressBar: UIView {
         }
     }
     
+    // 최고, 최저 기온에 맞게 파란 영역을 잡아주는 메서드
     func update(minTemp: Double, maxTemp: Double) {
         let sysRange = (Int(self.sysMin)...Int(self.sysMax)).count
         let tempRange = (Int(minTemp)...Int(maxTemp)).count
@@ -80,6 +84,7 @@ class TempProgressBar: UIView {
         layoutIfNeeded() // 레이아웃 강제 적용
     }
     
+    // 현재 기온의 포인트를 표시하는 메서드
     func updateCurrent(currentTemp: Double) {
         let sysRange = (Int(self.sysMin)...Int(self.sysMax)).count
         

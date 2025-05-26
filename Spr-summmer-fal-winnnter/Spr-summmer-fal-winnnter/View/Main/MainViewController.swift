@@ -58,7 +58,9 @@ extension MainViewController {
 // MARK: - Method
 extension MainViewController {
     
+    // MainViewModel의 Output을 구독하는 메서드
     private func bind() {
+        // 세팅 버튼 클릭 시
         //print("\t🌆 [메인 뷰컨] bind 호출")
         viewModel.output.showSettingMenu
             .subscribe { [weak self] _ in
@@ -67,14 +69,15 @@ extension MainViewController {
                 //print("\t\t🌆 [메인 뷰컨] output.showSettingMenu 호출")
             }.disposed(by: disposeBag)
         
+        // 메인 셀 데이터가 불러와지면
         // MARK: - 기존 코드
+
         viewModel.output.mainCellData
             .subscribe { [weak self] _ in
                 self?.weatherCollectionView.reloadData()
                 //print("\t\t🌆 [메인 뷰컨] output.mainCellData 호출")
             }.disposed(by: disposeBag)
         
-
         // 원래 코드
 //        viewModel.output.forecastListCellData
 //            .subscribe { [weak self] weather in
@@ -94,13 +97,15 @@ extension MainViewController {
                 self?.weatherCollectionView.reloadData()
             }.disposed(by: disposeBag)
         
-        viewModel.output.allForecastCellData
+        // customForecast 데이터 변환 작업이 끝나면
+        viewModel.output.customForecastData
             .subscribe { [weak self] _ in
                 self?.weatherCollectionView.reloadData()
 
             }.disposed(by: disposeBag)
     }
     
+    // MainViewModel에게 Input을 보내는 메서드
     private func inputBind() {
         //print("\t🌆 [메인 뷰컨] inputBind 호출")
         self.navigationItem.leftBarButtonItem?.rx.tap.subscribe { [weak self] _ in
@@ -122,6 +127,8 @@ extension MainViewController {
             }.disposed(by: disposeBag)
     }
     
+
+    // UI 세팅 메서드
     /// 메인셀 선택 시, 검색 화면으로 넘어가는 기능
     func cellSelect() {
         //print("\t🌆 [메인 뷰컨] cellSelect 호출")
@@ -162,7 +169,7 @@ extension MainViewController {
 //                
 //            }).disposed(by: disposeBag)
 //    }
-    
+
     private func setupUI() {
         let menuButton = UIBarButtonItem(
             image: UIImage(systemName: "line.3.horizontal"),
@@ -191,20 +198,24 @@ extension MainViewController: UICollectionViewDelegate {
 
 // MARK: - CollectionViewDataSource
 extension MainViewController: UICollectionViewDataSource {
+    
+    // 섹션 개수
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         Section.allCases.count
     }
     
+    // 섹션별 셀 개수
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch Section(rawValue: section) {
         case .main: return 1
         case .clothes: return 1
+        case .tenDayForecast: return self.viewModel.output.customForecastData.value?.count ?? 0
         case .forecastList: return self.viewModel.output.NOHUNforecastListCellData.value?.forecastList.count ?? 0
-        case .tenDayForecast: return self.viewModel.output.allForecastCellData.value?.count ?? 0
         case .none: return 0
         }
     }
     
+    // 셀에 표시할 아이템
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         switch Section(rawValue: indexPath.section) {
@@ -212,8 +223,10 @@ extension MainViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCell.identifier, for: indexPath) as? MainCell else { return .init() }
             
             guard let weather = viewModel.output.mainCellData.value else { return cell }
+            guard let customForecast = self.viewModel.output.customForecastData.value else { return cell }
                 
             cell.setText(weather: weather)
+            cell.setMinMaxTempForDay(temp: customForecast[indexPath.row].forecastList)
             
             // 여기서 주소도 전달
             cell.bindAddress(with: locationViewModel)
@@ -228,7 +241,6 @@ extension MainViewController: UICollectionViewDataSource {
         case .forecastList:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastListCell.identifier, for: indexPath) as? ForecastListCell else { return .init() }
             
-
             //원래 코드
 //            guard let data = self.viewModel.output.forecastListCellData.value else { return cell }
             //print("\n 받아온 데이터 \n \(self.viewModel.output.NOHUNforecastListCellData.value)")
@@ -246,16 +258,18 @@ extension MainViewController: UICollectionViewDataSource {
         case .tenDayForecast:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TenDayForecastCell.identifier, for: indexPath) as? TenDayForecastCell else { return .init() }
             
-            guard let data = self.viewModel.output.allForecastCellData.value else { return cell }
-            guard let forecast = self.viewModel.output.tenForecastCellData.value else { return cell }
+            guard let customData = self.viewModel.output.customForecastData.value else { return cell }
+            guard let forecast = self.viewModel.output.tenDayForecastCellData.value else { return cell }
             
-            cell.setCell(data: data[indexPath.row].forecastList, image: data[indexPath.row].weatherIcons)
+            cell.setCell(data: customData[indexPath.row].forecastList, image: customData[indexPath.row].weatherIcons)
             
             if indexPath.row == 0 {
                 // 첫 번째 셀
+                // 현재 온도를 표시할 메서드
                 cell.setCurrentTemp(data: forecast.forecastList[indexPath.row])
             } else if indexPath.row == 9 {
                 // 마지막 셀
+                // 구분선을 숨기는 메서드
                 cell.deleteSeparator()
             }
             
@@ -265,6 +279,7 @@ extension MainViewController: UICollectionViewDataSource {
         }
     }
     
+    // CollectionViewLayout 섹션을 합쳐 레이아웃 반환
     private func collectionViewConfigure() -> UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, environment in
             guard let section = Section(rawValue: sectionIndex) else { return nil }
@@ -278,11 +293,13 @@ extension MainViewController: UICollectionViewDataSource {
             
         }
         
+        // 셀 백그라운드 데코레이션 아이템
         layout.register(CellBackground.self, forDecorationViewOfKind: "section-background-element-kind")
         
         return layout
     }
     
+    // tenDayForecast섹션 레이아웃
     private func tenDayForecastSectionConfigure() -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(
             layoutSize: .init(widthDimension: .fractionalWidth(1),
@@ -303,6 +320,7 @@ extension MainViewController: UICollectionViewDataSource {
         return section
     }
     
+    // ForecastList 섹션 레이아웃
     private func forecastListSectionConfigure() -> NSCollectionLayoutSection {
         let item0 = NSCollectionLayoutItem(
             layoutSize: .init(widthDimension: .fractionalWidth(1/5),
@@ -335,6 +353,7 @@ extension MainViewController: UICollectionViewDataSource {
         return section
     }
     
+    // 메인, 옷 추천 섹션 레이아웃
     private func mainSectionConfigure() -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(
             layoutSize: .init(widthDimension: .fractionalWidth(1),

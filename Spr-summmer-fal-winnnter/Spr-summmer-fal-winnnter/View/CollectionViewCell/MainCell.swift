@@ -91,8 +91,13 @@ class MainCell: UICollectionViewCell {
         //cityLabel.text = weather.name
         tempLabel.text = "\(Int(weather.main.temp))°C"
         weatherLabel.text = weather.weather[0].main
-        minTempLabel.text = "\(Int(weather.main.tempMin))°C"
-        maxTempLabel.text = "\(Int(weather.main.tempMax))°C"
+//        minTempLabel.text = "\(Int(weather.main.tempMin))°C"
+//        maxTempLabel.text = "\(Int(weather.main.tempMax))°C"
+    }
+    
+    func setMinMaxTempForDay(temp: CustomForecastList) {
+        minTempLabel.text = "\(Int(temp.tempMin))°C"
+        maxTempLabel.text = "\(Int(temp.tempMax))°C"
     }
     
     /// 주소 정보 바인딩
