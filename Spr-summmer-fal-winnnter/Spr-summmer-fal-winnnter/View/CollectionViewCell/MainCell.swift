@@ -105,9 +105,9 @@ class MainCell: UICollectionViewCell {
     }
     
     /// 라벨에 현재 주소 출력
-    func setRegion(_ region: String) {
-        cityLabel.text = region
-    }
+//    func setRegion(_ region: String) {
+//        cityLabel.text = region
+//    }
     
     private func setupUI() {
         [minTempLabel, maxTempLabel]

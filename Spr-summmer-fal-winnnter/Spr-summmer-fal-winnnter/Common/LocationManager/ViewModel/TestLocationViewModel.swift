@@ -28,11 +28,11 @@ class ViewModel {
         
         guard let url = components?.url else { return }
         
-        print("검색 결과 최종 요청 URL: \(url)")
+        //print("검색 결과 최종 요청 URL: \(url)")
         
         LocationNetworkManager.shared.fetchData(url: url)
             .subscribe(onSuccess: { [weak self] (data:AddressData) in
-                print("카카오 API 응답 : \(data.documents)")
+                //print("카카오 API 응답 : \(data.documents)")
                 self?.fetchAddressRelay.accept(data.documents)
             }, onFailure: { error in
                 print("에러 발생: \(error.localizedDescription)")
@@ -41,6 +41,7 @@ class ViewModel {
     
     /// - 위도 경도 값을 주소로 변환
     func fetchRegionCode(longitude: String, latitude: String) {
+        //print("\t🗺️ [위치 뷰 모델] ViewModel fetchRegionCode")
         var components = URLComponents(string: "https://dapi.kakao.com/v2/local/geo/coord2regioncode")
         components?.queryItems = [
             URLQueryItem(name: "x", value: longitude),
@@ -49,15 +50,15 @@ class ViewModel {
         
         guard let url = components?.url else { return }
         
-        print("검색 결과 최종 요청 URL: \(url)")
+        //print("\t\t🗺️ [위치 뷰 모델] ViewModel fetchRegionCode 검색 결과 최종 요청 URL: \(url)")
 
         LocationNetworkManager.shared.fetchData(url: url)
             .subscribe(onSuccess: { [weak self] (data:RegionCodeResponse) in
                 //print("카카오 API 응답: \(data.documents)")
                 self?.regionCodeRelay.accept(data.documents)
-                print("regionCodeRelay 실행")
+                //print("\t\t\t🗺️ [위치 뷰 모델] ViewModel fetchRegionCode regionCodeRelay 실행")
             }, onFailure: { error in
-                print("에러 발생: \(error.localizedDescription)")
+                //print("\t\t\t🗺️ [위치 뷰 모델] ViewModel fetchRegionCode 에러 발생: \(error.localizedDescription)")
             }).disposed(by: disposeBag)
     }
 }
