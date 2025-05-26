@@ -71,16 +71,16 @@ class MainViewModel {
                 
                 switch input {
                 case .settingButtonTap:
-                    //print("\t\t📋 [메인 모델] MainViewModel transform settingButtonTap:")
+//                    print("\t\t📋 [메인 모델] MainViewModel transform settingButtonTap:")
                     output.showSettingMenu.accept(())
                 case .changeCoordinate:
-                    //print("\t\t📋 [메인 모델] MainViewModel transform changeCoordinate:")
-                    //print("\t\t📋 [메인 모델] MainViewModel transform 좌표 값 받아옴 : \(self.latitude), \(self.longitude)")
+//                    print("\t\t📋 [메인 모델] MainViewModel transform changeCoordinate:")
+//                    print("\t\t📋 [메인 모델] MainViewModel transform 좌표 값 받아옴 : \(self.latitude), \(self.longitude)")
                     self.locationViewModel.fetchRegionCode(longitude: self.longitude, latitude: self.latitude)
                     self.NOHUNloadWeatherResponseData()
-                    //print("\t\t\t📋 [메인 모델] NOHUNloadWeatherResponseData 실행")
+//                    print("\t\t\t📋 [메인 모델] NOHUNloadWeatherResponseData 실행")
                     self.NOHUNloadForecastListData()
-                    //print("\t\t\t📋 [메인 모델] NOHUNloadForecastListData 실행")
+//                    print("\t\t\t📋 [메인 모델] NOHUNloadForecastListData 실행")
                 }
             }).disposed(by: disposeBag)
     }
@@ -238,11 +238,11 @@ class MainViewModel {
 
     // WeatherResponse 모델의 정보를 받아오는 메서드
     private func NOHUNloadForecastListData() {
-        //print("\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData")
+        print("\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData")
         NetworkManager.shared.NOHUNfetchForeCastAndTenImageData(lat: latitude, lon: longitude)
             .subscribe(onSuccess: { [weak self] weather, data in
                 guard let self else { return }
-                //print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
+//                print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
 
                 var image = [UIImage]()
                 data.forEach {
@@ -250,8 +250,11 @@ class MainViewModel {
                         image.append(changedData)
                     }
                 }
+                
+                self.transformForecastListData(data: weather.list)
 
                 var list = [ForecastList](weather.list.prefix(12))
+                image = [UIImage](image.prefix(12))
 
                 if list.count >= 2 { list.removeFirst(2) }
                 if image.count >= 2 { image.removeFirst(2) }
@@ -259,11 +262,11 @@ class MainViewModel {
                 let result = tenDayForecastData(forecastList: list, weatherIcons: image)
                 self.output.NOHUNforecastListCellData.accept(result)
                 
-                //print("\t\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData NOHUNforecastListCellData.accept 성공!")
-                //print("\n 받아온 데이터 \n/\(result.forecastList)")
+//                print("\t\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData NOHUNforecastListCellData.accept 성공!")
+//                print("\n 받아온 데이터 \n/\(result.forecastList)")
 
             }, onFailure: { error in
-                //print("\t\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData forecast 로딩 실패: \(error)")
+//                print("\t\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData forecast 로딩 실패: \(error)")
             })
             .disposed(by: disposeBag)
     }

@@ -40,6 +40,7 @@ class TempProgressBar: UIView {
         view.backgroundColor = .white
         view.clipsToBounds = true
         view.layer.cornerRadius = 2.5
+        view.isHidden = true
         
         return view
     }()
@@ -81,6 +82,8 @@ class TempProgressBar: UIView {
             $0.width.equalToSuperview().multipliedBy(width)
         }
         
+        currentTempPoint.isHidden = true
+        
         layoutIfNeeded() // 레이아웃 강제 적용
     }
     
@@ -92,6 +95,7 @@ class TempProgressBar: UIView {
         let currentPersent = CGFloat(abs(currentTemp - self.sysMin) / Double(sysRange))
         let currentLeading = currentPersent * backgroundBar.frame.width
         
+        currentTempPoint.isHidden = false
         currentTempPoint.snp.makeConstraints {
             $0.width.height.equalTo(5)
             $0.top.bottom.equalToSuperview()

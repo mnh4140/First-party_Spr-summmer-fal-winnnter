@@ -260,7 +260,7 @@ extension MainViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TenDayForecastCell.identifier, for: indexPath) as? TenDayForecastCell else { return .init() }
             
             guard let customData = self.viewModel.output.customForecastData.value else { return cell }
-            guard let forecast = self.viewModel.output.tenDayForecastCellData.value else { return cell }
+            guard let forecast = self.viewModel.output.NOHUNforecastListCellData.value else { return cell }
             
             cell.setCell(data: customData[indexPath.row].forecastList, image: customData[indexPath.row].weatherIcons)
             
@@ -268,7 +268,7 @@ extension MainViewController: UICollectionViewDataSource {
                 // 첫 번째 셀
                 // 현재 온도를 표시할 메서드
                 cell.setCurrentTemp(data: forecast.forecastList[indexPath.row])
-            } else if indexPath.row == 9 {
+            } else if indexPath.row == 4 {
                 // 마지막 셀
                 // 구분선을 숨기는 메서드
                 cell.deleteSeparator()
