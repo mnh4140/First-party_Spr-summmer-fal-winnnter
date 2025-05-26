@@ -260,9 +260,9 @@ extension MainViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TenDayForecastCell.identifier, for: indexPath) as? TenDayForecastCell else { return .init() }
             
             guard let customData = self.viewModel.output.customForecastData.value else { return cell }
-            guard let forecast = self.viewModel.output.NOHUNforecastListCellData.value else { return cell }
+            guard let currentTemp = self.viewModel.output.NOHUNforecastListCellData.value?.forecastList[0].main.temp else { return cell }
             
-            cell.setCell(currentTemp: forecast.forecastList[indexPath.row],data: customData[indexPath.row].forecastList, image: customData[indexPath.row].weatherIcons)
+            cell.setCell(currentTemp: currentTemp,data: customData[indexPath.row].forecastList, image: customData[indexPath.row].weatherIcons)
             
             if indexPath.row == 0 {
                 // 첫 번째 셀
