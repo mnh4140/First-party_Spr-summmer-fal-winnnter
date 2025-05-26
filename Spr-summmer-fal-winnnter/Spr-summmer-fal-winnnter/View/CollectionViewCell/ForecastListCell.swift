@@ -52,7 +52,7 @@ class ForecastListCell: UICollectionViewCell {
     }
     
     func setFirstCell(data: ForecastList, icon: UIImage) {
-        timeLabel.text = "Now"
+        timeLabel.text = self.changeDate(data: data)
         tempLabel.text = "\(Int(data.main.temp))°C"
         weatherIcon.image = icon
     }

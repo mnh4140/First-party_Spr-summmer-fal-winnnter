@@ -87,10 +87,10 @@ class MainCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setText(data: ForecastList) {
+    func setText(weather: WeatherResponse) {
         //cityLabel.text = weather.name
-        tempLabel.text = "\(Int(data.main.temp))°C"
-        weatherLabel.text = data.weather[0].main.rawValue
+        tempLabel.text = "\(Int(weather.main.temp))°C"
+        weatherLabel.text = weather.weather[0].main
 //        minTempLabel.text = "\(Int(weather.main.tempMin))°C"
 //        maxTempLabel.text = "\(Int(weather.main.tempMax))°C"
     }

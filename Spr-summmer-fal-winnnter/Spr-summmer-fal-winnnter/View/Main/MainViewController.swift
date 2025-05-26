@@ -225,10 +225,10 @@ extension MainViewController: UICollectionViewDataSource {
         case .main:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCell.identifier, for: indexPath) as? MainCell else { return .init() }
             
-            guard let forecastData = self.viewModel.output.NOHUNforecastListCellData.value else { return cell }
+            guard let weather = viewModel.output.mainCellData.value else { return cell }
             guard let customForecast = self.viewModel.output.customForecastData.value else { return cell }
                 
-            cell.setText(data: forecastData.forecastList[indexPath.row])
+            cell.setText(weather: weather)
             cell.setMinMaxTempForDay(temp: customForecast[indexPath.row].forecastList)
             
             // 여기서 주소도 전달
