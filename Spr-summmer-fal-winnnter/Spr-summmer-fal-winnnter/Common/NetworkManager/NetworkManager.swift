@@ -108,7 +108,7 @@ class NetworkManager {
             .flatMap { weatherForecast in
                 
                 // 예보에서 아이콘 코드 최대 10개 추출
-                let iconIds = weatherForecast.list.prefix(12).compactMap { $0.weather.first?.icon }
+                let iconIds = weatherForecast.list.compactMap { $0.weather.first?.icon }
                 
                 // 각 아이콘 코드로부터 이미지 데이터 다운로드 요청 Single 배열
                 let imageSingles = iconIds.map { iconIds in
