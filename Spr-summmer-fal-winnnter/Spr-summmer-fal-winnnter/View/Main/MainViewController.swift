@@ -70,13 +70,13 @@ extension MainViewController {
             }.disposed(by: disposeBag)
         
         // tenDayForecastCell 데이터가 불러와지면
-        viewModel.output.tenForecastCellData
+        viewModel.output.tenDayForecastCellData
             .subscribe { [weak self] _ in
                 self?.weatherCollectionView.reloadData()
             }.disposed(by: disposeBag)
         
         // customForecast 데이터 변환 작업이 끝나면
-        viewModel.output.customForecastCellData
+        viewModel.output.customForecastData
             .subscribe { [weak self] _ in
                 self?.weatherCollectionView.reloadData()
             }.disposed(by: disposeBag)
@@ -130,8 +130,8 @@ extension MainViewController: UICollectionViewDataSource {
         switch Section(rawValue: section) {
         case .main: return 1
         case .clothes: return 1
-        case .forecastList: return self.viewModel.output.tenForecastCellData.value?.forecastList.count ?? 0
-        case .tenDayForecast: return self.viewModel.output.customForecastCellData.value?.count ?? 0
+        case .forecastList: return self.viewModel.output.tenDayForecastCellData.value?.forecastList.count ?? 0
+        case .tenDayForecast: return self.viewModel.output.customForecastData.value?.count ?? 0
         case .none: return 0
         }
     }
@@ -144,7 +144,7 @@ extension MainViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCell.identifier, for: indexPath) as? MainCell else { return .init() }
             
             guard let weather = viewModel.output.mainCellData.value else { return cell }
-            guard let customForecast = self.viewModel.output.customForecastCellData.value else { return cell }
+            guard let customForecast = self.viewModel.output.customForecastData.value else { return cell }
                 
             cell.setText(weather: weather)
             cell.setMinMaxTempForDay(temp: customForecast[indexPath.row].forecastList)
@@ -159,7 +159,7 @@ extension MainViewController: UICollectionViewDataSource {
         case .forecastList:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastListCell.identifier, for: indexPath) as? ForecastListCell else { return .init() }
             
-            guard let data = self.viewModel.output.tenForecastCellData.value else { return cell }
+            guard let data = self.viewModel.output.tenDayForecastCellData.value else { return cell }
             
             if indexPath.row == 0 {
                 cell.setFirstCell(data: data.forecastList[indexPath.row],
@@ -173,10 +173,10 @@ extension MainViewController: UICollectionViewDataSource {
         case .tenDayForecast:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TenDayForecastCell.identifier, for: indexPath) as? TenDayForecastCell else { return .init() }
             
-            guard let data = self.viewModel.output.customForecastCellData.value else { return cell }
-            guard let forecast = self.viewModel.output.tenForecastCellData.value else { return cell }
+            guard let customData = self.viewModel.output.customForecastData.value else { return cell }
+            guard let forecast = self.viewModel.output.tenDayForecastCellData.value else { return cell }
             
-            cell.setCell(data: data[indexPath.row].forecastList, image: data[indexPath.row].weatherIcons)
+            cell.setCell(data: customData[indexPath.row].forecastList, image: customData[indexPath.row].weatherIcons)
             
             if indexPath.row == 0 {
                 // 첫 번째 셀
