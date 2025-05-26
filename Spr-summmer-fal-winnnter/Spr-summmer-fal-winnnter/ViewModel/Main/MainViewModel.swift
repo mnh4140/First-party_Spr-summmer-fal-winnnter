@@ -132,6 +132,8 @@ class MainViewModel {
 
                 let result = tenDayForecastData(forecastList: list, weatherIcons: image)
                 self.output.NOHUNforecastListCellData.accept(result)
+                
+                print("날씨 ForecastListData API 호출: lat=\(latitude), lon=\(longitude)")
 
             }, onFailure: { error in
                 print("loadForecastListData forecast 로딩 실패: \(error)")
@@ -269,7 +271,10 @@ class MainViewModel {
         NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
             .subscribe { [weak self] (weather, imageURL) in
                 guard let self else { return }
+                
                 self.output.mainCellData.accept(weather)
+                print("날씨 API 호출: lat=\(latitude), lon=\(longitude)")
+                
             } onFailure: { error in
                 print(error)
             }.disposed(by: disposeBag)
