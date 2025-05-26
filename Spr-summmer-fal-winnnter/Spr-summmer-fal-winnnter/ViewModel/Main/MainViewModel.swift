@@ -57,6 +57,7 @@ class MainViewModel {
     
     init(locationViewModel: ViewModel ) {
         self.locationViewModel = locationViewModel
+        applyDummyData() // 더미데이터 생성 메소드
         transform()
         setUpSideMenuNavigationVC()
         loadWeatherResponseData()
@@ -299,6 +300,98 @@ class MainViewModel {
         SideMenuManager.default.leftMenuNavigationController = menuNavVC
 //           SideMenuManager.default.leftMenuNavigationController?.setNavigationBarHidden(true, animated: true)
     }
-    
-    //func show
+}
+
+extension MainViewModel {
+
+    /// 더미 데이터 생성 메소드
+    func applyDummyData() {
+        // 1. 현재 날씨 더미
+        let dummyWeather = WeatherResponse(
+            coord: Coord(lon: 127.0, lat: 37.5),
+            weather: [Weather(id: 800, main: "Clear", description: "clear sky", icon: "01d")],
+            base: "stations",
+            main: Main(
+                temp: 24.0, feelsLike: 24.5, tempMin: 22.0, tempMax: 26.0,
+                pressure: 1012, humidity: 50, seaLevel: 1012, grndLevel: 1005
+            ),
+            visibility: 10000,
+            wind: Wind(speed: 3.0, deg: 180, gust: nil),
+            clouds: Clouds(all: 0),
+            dt: Int(Date().timeIntervalSince1970),
+            sys: Sys(country: "KR", sunrise: 1716600000, sunset: 1716648000),
+            timezone: 32400,
+            id: 1835847,
+            name: "서울",
+            cod: 200
+        )
+        output.mainCellData.accept(dummyWeather)
+
+        // 2. ForecastList 더미 6개 (3시간 간격 예보)
+        let dummyForecastList: [ForecastList] = (0..<10).map { createDummyForecastList(index: $0) }
+
+        let dummyIcon = UIImage(systemName: "sun.max.fill") ?? UIImage()
+        let iconList = Array(repeating: dummyIcon, count: dummyForecastList.count)
+
+        let forecastData = tenDayForecastData(
+            forecastList: dummyForecastList,
+            weatherIcons: iconList
+        )
+        output.NOHUNforecastListCellData.accept(forecastData)
+
+        // 3. CustomForecastList 더미 5일치
+        let dummyCustomForecast: [CustomForecastData] = (1...5).map { day in
+            let custom = CustomForecastList(
+                day: String(format: "%02d", day),
+                tempMin: 18.0 + Double(day),
+                tempMax: 28.0 + Double(day),
+                pop: Double(day) * 0.1,
+                icon: "01d"
+            )
+            return CustomForecastData(
+                forecastList: custom,
+                weatherIcons: dummyIcon
+            )
+        }
+
+        output.customForecastData.accept(dummyCustomForecast)
+    }
+
+    private func createDummyForecastList(index i: Int) -> ForecastList {
+        let baseDate = Date().addingTimeInterval(Double(i * 3 * 3600))
+        let main = MainClass(
+            temp: 23 + Double(i),
+            feelsLike: 23 + Double(i),
+            tempMin: 20,
+            tempMax: 28,
+            pressure: 1012,
+            seaLevel: 1012,
+            grndLevel: 1005,
+            humidity: 60,
+            tempKf: 0
+        )
+        let weather = ForecastWeather(id: 800, main: .clear, description: "clear", icon: "01d")
+        let clouds = ForecastClouds(all: 0)
+        let wind = ForecastWind(speed: 3.5, deg: 200, gust: 4.0)
+        let sys = ForecastSys(pod: .d)
+
+        return ForecastList(
+            dt: Int(baseDate.timeIntervalSince1970),
+            main: main,
+            weather: [weather],
+            clouds: clouds,
+            wind: wind,
+            visibility: 10000,
+            pop: 0.1,
+            rain: nil,
+            sys: sys,
+            dtTxt: dateToString(baseDate)
+        )
+    }
+
+    private func dateToString(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter.string(from: date)
+    }
 }
