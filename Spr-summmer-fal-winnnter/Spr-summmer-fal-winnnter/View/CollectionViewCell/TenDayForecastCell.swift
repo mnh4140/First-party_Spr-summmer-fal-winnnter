@@ -82,12 +82,13 @@ class TenDayForecastCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setCell(currentTemp: Double, data: CustomForecastList, image: UIImage) {
+    func setCell(currentTemp: Double, data: CustomForecastList, image: UIImage, tempUnit: Int) {
         dayLabel.text = "\(data.day)일"
         weatherImageView.image = image
         rainfallLabel.text = "\(data.pop * 100)%"
-        minTempLabel.text = "\(Int(data.tempMin))°C"
-        maxTempLabel.text = "\(Int(data.tempMax))°C"
+        let tempResult = tempUnit == 0 ? "°C" : "°F"
+        minTempLabel.text = "\(Int(data.tempMin))" + tempResult
+        maxTempLabel.text = "\(Int(data.tempMax))" + tempResult
         progressBar.update(currentTemp: currentTemp, minTemp: data.tempMin, maxTemp: data.tempMax)
     }
     

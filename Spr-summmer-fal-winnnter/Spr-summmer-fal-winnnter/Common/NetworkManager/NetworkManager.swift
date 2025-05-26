@@ -24,12 +24,12 @@ class NetworkManager {
         return key
     }()
     
-    func makeUrlQueryItems(lat: String, lon: String) -> [URLQueryItem] {
+    func makeUrlQueryItems(lat: String, lon: String, tempUnit: Int) -> [URLQueryItem] {
         return [
             URLQueryItem(name: "lat", value: lat), // 위도
             URLQueryItem(name: "lon", value: lon), // 경도
             URLQueryItem(name: "appid", value: apiKey), // apiKey 추가
-            URLQueryItem(name: "units", value: "metric") // 섭씨로 데이터 받기
+            URLQueryItem(name: "units", value: tempUnit == 0 ? "metric" : "imperial")
         ]
     }
     
@@ -41,10 +41,10 @@ class NetworkManager {
     }
     
     // 서버에서 현재 날씨를 받아오는 메서드
-    func fetchCurrentWeatherData(lat: String, lon: String) -> Single<(WeatherResponse, String)> {
+    func fetchCurrentWeatherData(lat: String, lon: String, tempUnit: Int) -> Single<(WeatherResponse, String)> {
         return Single.create { single in
             var urlComponents = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather")
-            urlComponents?.queryItems = self.makeUrlQueryItems(lat: lat, lon: lon)
+            urlComponents?.queryItems = self.makeUrlQueryItems(lat: lat, lon: lon, tempUnit: tempUnit)
             
             guard let url = urlComponents?.url else {
                 print("잘못된 URL")
@@ -72,10 +72,10 @@ class NetworkManager {
     }
     
     // 서버에서 5일 간 날씨 예보 데이터를 불러오는 메서드
-    func fetchForeCastData(lat: String, lon: String) -> Single<WeatherForecast> {
+    func fetchForeCastData(lat: String, lon: String, tempUnit: Int) -> Single<WeatherForecast> {
         return Single.create { single in
             var urlComponents = URLComponents(string: "https://api.openweathermap.org/data/2.5/forecast")
-            urlComponents?.queryItems = self.makeUrlQueryItems(lat: lat, lon: lon)
+            urlComponents?.queryItems = self.makeUrlQueryItems(lat: lat, lon: lon, tempUnit: tempUnit)
             
             guard let url = urlComponents?.url else {
                 print("잘못된 URL")
@@ -102,8 +102,8 @@ class NetworkManager {
     }
     
     // weatherForecast 와 icon image Data 배열 10개를 방출하는 함수
-    func fetchForeCastAndTenImageData(lat: String, lon: String) -> Single<(WeatherForecast, [Data])> {
-        return fetchForeCastData(lat: lat, lon: lon)
+    func fetchForeCastAndTenImageData(lat: String, lon: String, tempUnit: Int) -> Single<(WeatherForecast, [Data])> {
+        return fetchForeCastData(lat: lat, lon: lon, tempUnit: tempUnit)
             .flatMap { weatherForecast in
                 
                 // 예보에서 아이콘 코드 최대 10개 추출
