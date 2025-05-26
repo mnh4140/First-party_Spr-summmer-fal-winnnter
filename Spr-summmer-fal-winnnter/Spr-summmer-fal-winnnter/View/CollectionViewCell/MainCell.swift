@@ -7,12 +7,16 @@
 
 import UIKit
 import SnapKit
+import RxSwift
 
 class MainCell: UICollectionViewCell {
     static let identifier = "MainCell"
     
+    var disposeBag = DisposeBag()
+    
     private let cityLabel: UILabel = {
         let label = UILabel()
+        label.text = "도시 이름이 나타납니다."
         label.font = .systemFont(ofSize: 32)
         label.textColor = .white
         label.textAlignment = .center
@@ -84,7 +88,7 @@ class MainCell: UICollectionViewCell {
     }
     
     func setText(weather: WeatherResponse) {
-        cityLabel.text = weather.name
+        //cityLabel.text = weather.name
         tempLabel.text = "\(Int(weather.main.temp))°C"
         weatherLabel.text = weather.weather[0].main
 //        minTempLabel.text = "\(Int(weather.main.tempMin))°C"
@@ -95,6 +99,20 @@ class MainCell: UICollectionViewCell {
         minTempLabel.text = "\(Int(temp.tempMin))°C"
         maxTempLabel.text = "\(Int(temp.tempMax))°C"
     }
+    
+    /// 주소 정보 바인딩
+    func bindAddress(with viewModel: ViewModel) {
+        viewModel.regionCodeRelay
+            .asDriver(onErrorJustReturn: [])
+            .map { $0.first?.addressName ?? "주소 없음" }
+            .drive(cityLabel.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    /// 라벨에 현재 주소 출력
+//    func setRegion(_ region: String) {
+//        cityLabel.text = region
+//    }
     
     private func setupUI() {
         [minTempLabel, maxTempLabel]

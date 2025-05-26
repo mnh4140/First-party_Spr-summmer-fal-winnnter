@@ -16,13 +16,18 @@ class MainViewModel {
     
     enum Input {
         case settingButtonTap
+        case changeCoordinate
     }
     
     struct Output {
         let showSettingMenu = PublishRelay<Void>()
         let mainCellData = BehaviorRelay<WeatherResponse?>(value: nil)
+
         let tenDayForecastCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
         let customForecastData = BehaviorRelay<[CustomForecastData]?>(value: nil)
+
+        let forecastListCellData = BehaviorRelay<ForecastData?>(value: nil)
+        let NOHUNforecastListCellData = BehaviorRelay<ForecastData?>(value: nil)
     }
     
     struct tenDayForecastData {
@@ -41,23 +46,43 @@ class MainViewModel {
     let input = PublishRelay<Input>()
     let output = Output()
     
-    init() {
+    var latitude: String = ""
+    var longitude: String = ""
+    
+    let locationViewModel: ViewModel
+    
+    //var locationViewModel = ViewModel()
+    init(locationViewModel: ViewModel ) {
+        self.locationViewModel = locationViewModel
+        //print("📋 [메인 모델] MainViewModel 초기화")
         transform()
         setUpSideMenuNavigationVC()
         loadWeatherResponseData()
-        loadForecastListData()
+        //loadForecastListData()
     }
     
     // 들어온 Input을 Output으로 변환하는 메서드
     private func transform() {
-        self.input.bind(onNext: { [weak self] input in
-            guard let self else { return }
-            
-            switch input {
-            case .settingButtonTap:
-                output.showSettingMenu.accept(())
-            }
-        }).disposed(by: disposeBag)
+        //print("\t📋 [메인 모델] MainViewModel transform")
+        self.input
+            //.bind(onNext: { [weak self] input in
+            .subscribe(onNext: { [weak self] input in
+                guard let self else { return }
+                
+                switch input {
+                case .settingButtonTap:
+                    //print("\t\t📋 [메인 모델] MainViewModel transform settingButtonTap:")
+                    output.showSettingMenu.accept(())
+                case .changeCoordinate:
+                    //print("\t\t📋 [메인 모델] MainViewModel transform changeCoordinate:")
+                    //print("\t\t📋 [메인 모델] MainViewModel transform 좌표 값 받아옴 : \(self.latitude), \(self.longitude)")
+                    self.locationViewModel.fetchRegionCode(longitude: self.longitude, latitude: self.latitude)
+                    self.NOHUNloadWeatherResponseData()
+                    //print("\t\t\t📋 [메인 모델] NOHUNloadWeatherResponseData 실행")
+                    self.NOHUNloadForecastListData()
+                    //print("\t\t\t📋 [메인 모델] NOHUNloadForecastListData 실행")
+                }
+            }).disposed(by: disposeBag)
     }
     
     // WeatherForecast 모델의 정보를 받아와 필요한 곳으로 보내는 메서드
@@ -210,8 +235,41 @@ class MainViewModel {
 
     }
     
+
     // WeatherResponse 모델의 정보를 받아오는 메서드
+    private func NOHUNloadForecastListData() {
+        //print("\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData")
+        NetworkManager.shared.NOHUNfetchForeCastAndTenImageData(lat: latitude, lon: longitude)
+            .subscribe(onSuccess: { [weak self] weather, data in
+                guard let self else { return }
+                //print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
+
+                var image = [UIImage]()
+                data.forEach {
+                    if let changedData = UIImage(data: $0) {
+                        image.append(changedData)
+                    }
+                }
+
+                var list = [ForecastList](weather.list.prefix(12))
+
+                if list.count >= 2 { list.removeFirst(2) }
+                if image.count >= 2 { image.removeFirst(2) }
+
+                let result = ForecastData(forecastList: list, weatherIcons: image)
+                self.output.NOHUNforecastListCellData.accept(result)
+                
+                //print("\t\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData NOHUNforecastListCellData.accept 성공!")
+                //print("\n 받아온 데이터 \n/\(result.forecastList)")
+
+            }, onFailure: { error in
+                //print("\t\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData forecast 로딩 실패: \(error)")
+            })
+            .disposed(by: disposeBag)
+    }
+    
     private func loadWeatherResponseData() {
+        //print("\t📋 [메인 모델] MainViewModel loadWeatherResponseData 실행")
         NetworkManager.shared.fetchCurrentWeatherData(lat: 37.5, lon: 126.9)
             .subscribe { [weak self] (weather, imageURL) in
                 guard let self else { return }
@@ -221,14 +279,28 @@ class MainViewModel {
             }.disposed(by: disposeBag)
     }
     
+
     // 세팅 버튼을 클릭하면 세팅 뷰를 띄워주는 메서드
+    private func NOHUNloadWeatherResponseData() {
+        //print("\t📋 [메인 모델] MainViewModel loadWeatherResponseData 실행")
+        NetworkManager.shared.NOHUNfetchCurrentWeatherData(lat: latitude, lon: longitude)
+            .subscribe { [weak self] (weather, imageURL) in
+                guard let self else { return }
+                self.output.mainCellData.accept(weather)
+            } onFailure: { error in
+                print(error)
+            }.disposed(by: disposeBag)
+    }
+
     func showSettingMenu(on vc: UIViewController) {
+        //print("\t📋 [메인 모델] howSettingMenu 실행")
         guard let sideMenu = SideMenuManager.default.leftMenuNavigationController else { return }
         vc.present(sideMenu, animated: true)
     }
     
     // 세팅 뷰 사이드메뉴 라이브러리 설정
     private func setUpSideMenuNavigationVC() {
+        //print("\t📋 [메인 모델] MainViewModel setUpSideMenuNavigationVC 실행")
         let menuNavVC = SideMenuNavigationController(rootViewController: SettingsViewController())
         
         menuNavVC.menuWidth = UIScreen.main.bounds.width * 0.7

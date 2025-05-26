@@ -16,6 +16,7 @@ final class SearchViewController: UIViewController {
     let tableView = UITableView()
     
     var viewModel = ViewModel()
+    lazy var mainViewModel = MainViewModel(locationViewModel: viewModel)
     
     let dataRelay = BehaviorRelay<[AddressData.Document.Address]>(value: [])
     var disposeBag = DisposeBag()
@@ -66,21 +67,38 @@ final class SearchViewController: UIViewController {
         
         // Relay 구독으로 결과 받기
         viewModel.fetchAddressRelay
+            .asDriver(onErrorJustReturn: [])
             .map { documents in
                 documents.compactMap { $0.address }
             }
-            .bind(to: dataRelay) // 예: tableView에서 바인딩하는 Relay
-            .disposed(by: disposeBag)
-        
-        // 위에서 방출된 dataRelay 값을 테이블 뷰 셀에 적용하기
-        dataRelay // 주소 검색 결과를 가져오는 릴레이
-            // Rx 방식으로 테이블 뷰를 구성
-            .bind(to: tableView.rx.items(
+            .drive(tableView.rx.items(
                 cellIdentifier: String(describing: SearchResultCell.self),
                 cellType: SearchResultCell.self)
             ) { row, Address, cell in
                 cell.configure(data: Address)
-            }
-            .disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
+        
+        // 셀 선택 시 해당 모델 출력
+        tableView.rx.modelSelected(AddressData.Document.Address.self)
+            .subscribe(onNext: { selectedAddress in
+                guard let x = selectedAddress.x,
+                      let y = selectedAddress.y else { return }
+                print("선택된 위도: \(x), 경도: \(y)")
+                self.viewModel.fetchRegionCode(longitude: x, latitude: y)
+                NetworkManager.shared.NOHUNfetchCurrentWeatherData(lat: y, lon: x)
+                    .subscribe(onSuccess:  { [weak self] (weather, imageURL) in
+                        //print("불러온 날씨 데이터 : \n\(weather)")
+                        self?.mainViewModel.output.mainCellData.accept(weather)
+                    }, onFailure: { error in
+                        print(error)
+                    }).disposed(by: self.disposeBag)
+                
+                // ddd
+                self.mainViewModel.latitude = "\(y)"
+                self.mainViewModel.longitude = "\(x)"
+                self.mainViewModel.input.accept(.changeCoordinate)
+                
+                self.navigationController?.popViewController(animated: true)
+            }).disposed(by: disposeBag)
     }
 }
