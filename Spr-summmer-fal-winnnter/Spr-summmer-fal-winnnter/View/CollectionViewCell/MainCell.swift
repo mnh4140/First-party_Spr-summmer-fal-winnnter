@@ -100,7 +100,7 @@ class MainCell: UICollectionViewCell {
         maxTempLabel.text = "\(Int(temp.tempMax))°C"
     }
     
-    /// 주소 정보 바인딩
+    /// [위치] 주소 정보 바인딩
     func bindAddress(with viewModel: ViewModel) {
         viewModel.regionCodeRelay
             .asDriver(onErrorJustReturn: [])

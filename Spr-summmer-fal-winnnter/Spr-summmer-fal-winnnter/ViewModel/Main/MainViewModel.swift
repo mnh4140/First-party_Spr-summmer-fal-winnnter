@@ -87,7 +87,7 @@ class MainViewModel {
     
     // WeatherForecast 모델의 정보를 받아와 필요한 곳으로 보내는 메서드
     private func loadForecastListData() {
-        NetworkManager.shared.fetchForeCastAndTenImageData(lat: 37.5, lon: 126.9)
+        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude, lon: longitude)
             .subscribe { weather, data in
                 var image = [UIImage]()
                 data.forEach {
@@ -235,11 +235,10 @@ class MainViewModel {
 
     }
     
-
     // WeatherResponse 모델의 정보를 받아오는 메서드
     private func NOHUNloadForecastListData() {
         print("\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData")
-        NetworkManager.shared.NOHUNfetchForeCastAndTenImageData(lat: latitude, lon: longitude)
+        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude, lon: longitude)
             .subscribe(onSuccess: { [weak self] weather, data in
                 guard let self else { return }
 //                print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
@@ -273,7 +272,7 @@ class MainViewModel {
     
     private func loadWeatherResponseData() {
         //print("\t📋 [메인 모델] MainViewModel loadWeatherResponseData 실행")
-        NetworkManager.shared.fetchCurrentWeatherData(lat: 37.5, lon: 126.9)
+        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
             .subscribe { [weak self] (weather, imageURL) in
                 guard let self else { return }
                 self.output.mainCellData.accept(weather)
@@ -286,7 +285,7 @@ class MainViewModel {
     // 세팅 버튼을 클릭하면 세팅 뷰를 띄워주는 메서드
     private func NOHUNloadWeatherResponseData() {
         //print("\t📋 [메인 모델] MainViewModel loadWeatherResponseData 실행")
-        NetworkManager.shared.NOHUNfetchCurrentWeatherData(lat: latitude, lon: longitude)
+        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
             .subscribe { [weak self] (weather, imageURL) in
                 guard let self else { return }
                 self.output.mainCellData.accept(weather)
