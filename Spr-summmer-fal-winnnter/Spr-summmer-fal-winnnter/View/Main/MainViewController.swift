@@ -91,8 +91,9 @@ extension MainViewController {
                 
                 self.weatherCollectionView.reloadData()
                 //print("\t\t🌆 [메인 뷰컨] output.NOHUNforecastListCellData 호출")
+            }.disposed(by: disposeBag)
 
-        viewModel.output.tenForecastCellData
+        viewModel.output.tenDayForecastCellData
             .subscribe { [weak self] _ in
                 self?.weatherCollectionView.reloadData()
             }.disposed(by: disposeBag)

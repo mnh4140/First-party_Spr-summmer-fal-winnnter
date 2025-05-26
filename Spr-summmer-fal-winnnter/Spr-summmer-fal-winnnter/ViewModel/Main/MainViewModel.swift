@@ -26,8 +26,8 @@ class MainViewModel {
         let tenDayForecastCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
         let customForecastData = BehaviorRelay<[CustomForecastData]?>(value: nil)
 
-        let forecastListCellData = BehaviorRelay<ForecastData?>(value: nil)
-        let NOHUNforecastListCellData = BehaviorRelay<ForecastData?>(value: nil)
+        let forecastListCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
+        let NOHUNforecastListCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
     }
     
     struct tenDayForecastData {
@@ -256,7 +256,7 @@ class MainViewModel {
                 if list.count >= 2 { list.removeFirst(2) }
                 if image.count >= 2 { image.removeFirst(2) }
 
-                let result = ForecastData(forecastList: list, weatherIcons: image)
+                let result = tenDayForecastData(forecastList: list, weatherIcons: image)
                 self.output.NOHUNforecastListCellData.accept(result)
                 
                 //print("\t\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData NOHUNforecastListCellData.accept 성공!")
