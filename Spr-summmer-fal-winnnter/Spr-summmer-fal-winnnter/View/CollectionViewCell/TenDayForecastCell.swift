@@ -82,36 +82,18 @@ class TenDayForecastCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func test() {
-        let minTemp = 10.0
-        let maxTemp = 27.0
-        
-        dayLabel.text = "Mon"
-        weatherImageView.backgroundColor = .white
-        rainfallLabel.text = "70%"
-        minTempLabel.text = "\(minTemp)'"
-        maxTempLabel.text = "\(maxTemp)'"
-        progressBar.update(minTemp: minTemp, maxTemp: maxTemp)
-    }
-    
-    func testFirstCell() {
-        let currentTemp = 23.0
-        
-        progressBar.updateCurrent(currentTemp: currentTemp)
-    }
-    
-    func setCell(data: CustomForecastList, image: UIImage) {
+    func setCell(currentTemp: Double, data: CustomForecastList, image: UIImage) {
         dayLabel.text = "\(data.day)일"
         weatherImageView.image = image
         rainfallLabel.text = "\(data.pop * 100)%"
         minTempLabel.text = "\(Int(data.tempMin))°C"
         maxTempLabel.text = "\(Int(data.tempMax))°C"
-        progressBar.update(minTemp: data.tempMin, maxTemp: data.tempMax)
+        progressBar.update(currentTemp: currentTemp, minTemp: data.tempMin, maxTemp: data.tempMax)
     }
     
-    func setCurrentTemp(data: ForecastList) {
+    func setToday() {
         dayLabel.text = "Today"
-        progressBar.updateCurrent(currentTemp: data.main.temp)
+        progressBar.setCurrentPoint()
     }
     
     func deleteSeparator() {
