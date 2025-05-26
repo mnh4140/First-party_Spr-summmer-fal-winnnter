@@ -13,7 +13,7 @@ class TenDayForecastCell: UICollectionViewCell {
     
     private let dayLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .medium)
+        label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = .white
         
         return label
@@ -30,6 +30,7 @@ class TenDayForecastCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .white
+        label.adjustsFontSizeToFitWidth = true
         
         return label
     }()
@@ -99,16 +100,17 @@ class TenDayForecastCell: UICollectionViewCell {
         progressBar.updateCurrent(currentTemp: currentTemp)
     }
     
-    func setCell(data: ForecastList) {
-        dayLabel.text = "Mon"
-        weatherImageView.backgroundColor = .white
-        rainfallLabel.text = "\(Int(data.pop * 100))%"
-        minTempLabel.text = "\(data.main.tempMin)'"
-        maxTempLabel.text = "\(data.main.tempMax)'"
-        progressBar.update(minTemp: data.main.tempMin, maxTemp: data.main.tempMax)
+    func setCell(data: CustomForecastList, image: UIImage) {
+        dayLabel.text = "\(data.day)일"
+        weatherImageView.image = image
+        rainfallLabel.text = "\(data.pop * 100)%"
+        minTempLabel.text = "\(Int(data.tempMin))°C"
+        maxTempLabel.text = "\(Int(data.tempMax))°C"
+        progressBar.update(minTemp: data.tempMin, maxTemp: data.tempMax)
     }
     
     func setCurrentTemp(data: ForecastList) {
+        dayLabel.text = "Today"
         progressBar.updateCurrent(currentTemp: data.main.temp)
     }
     
