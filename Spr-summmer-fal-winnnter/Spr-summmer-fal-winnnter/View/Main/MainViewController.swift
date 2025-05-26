@@ -52,6 +52,7 @@ extension MainViewController {
         //bindLocationManager()
         LocationManager.shared.requestLocation()
         //cellSelect()
+        reloadMainCellData()
     }
 }
 
@@ -139,6 +140,7 @@ extension MainViewController {
                 guard let self else { return }
 //                self.viewModel.latitude = "\(coordinate.latitude)"
 //                self.viewModel.longitude = "\(coordinate.longitude)"
+                guard let coordinate else { return }
                 self.viewModel.latitude.accept("\(coordinate.latitude)")
                 self.viewModel.longitude.accept("\(coordinate.longitude)")
                 self.viewModel.input.accept(.changeCoordinate)
@@ -190,6 +192,50 @@ extension MainViewController {
             $0.height.width.equalTo(view.safeAreaLayoutGuide).inset(32)
             $0.center.equalToSuperview()
         }
+    }
+    
+    /// pull to refresh
+    private func reloadMainCellData() {
+        
+        var isEnd: Bool = false
+        
+        weatherCollectionView.rx.didEndDecelerating
+            .subscribe(onNext: {
+                print("스크롤 완전히 멈춤")
+                isEnd = true
+            })
+            .disposed(by: disposeBag)
+        
+        weatherCollectionView.rx.contentOffset
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] contentOffset in
+                guard let self = self else { return }
+                //let contentHeight = self.weatherCollectionView.contentSize.height
+                //let height = self.weatherCollectionView.frame.size.height
+                let yOffset = contentOffset.y
+                //print("yOffset : \(yOffset)")
+                //print("height : \(height)")
+                //print("contentHeight : \(contentHeight)")
+                // 바닥에 도달했는지 판단
+                if yOffset < -210  && isEnd {
+                    print("스크롤 동작")
+                    
+                    // 더미 데이터 넣기
+                    self.viewModel.applyDummyData()
+                    
+                    LocationManager.shared.coordinateSubject
+                        .subscribe(onNext: { coordinate in
+                            self.viewModel.input.accept(.changeCoordinate)
+                        }).disposed(by: self.disposeBag)
+                   
+                    
+                    self.weatherCollectionView.reloadData()
+                    
+                    print("데이터 갱신")
+                    
+                    isEnd = false
+                }
+            }).disposed(by: disposeBag)
     }
     
 }

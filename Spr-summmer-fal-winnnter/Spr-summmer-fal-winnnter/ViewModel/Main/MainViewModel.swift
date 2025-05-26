@@ -274,7 +274,10 @@ class MainViewModel {
         NetworkManager.shared.fetchCurrentWeatherData(lat: latitude.value, lon: longitude.value, tempUnit: tempUnit.value)
             .subscribe { [weak self] (weather, imageURL) in
                 guard let self else { return }
+                
                 self.output.mainCellData.accept(weather)
+                print("날씨 API 호출: lat=\(latitude), lon=\(longitude)")
+                
             } onFailure: { error in
                 print(error)
             }.disposed(by: disposeBag)
