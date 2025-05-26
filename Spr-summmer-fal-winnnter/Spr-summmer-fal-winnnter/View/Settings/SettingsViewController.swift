@@ -15,8 +15,12 @@ import RxCocoa
 class SettingsViewController: UIViewController {
     
     // Property
-//    private let disposeBag = DisposeBag()
-//    private let viewModel = MainViewModel()
+    private let disposeBag = DisposeBag()
+    
+//    private let locationViewModel = ViewModel()
+//    lazy var viewModel = MainViewModel(locationViewModel: locationViewModel)
+    
+    var viewModel: MainViewModel?
     
     // MARK: - UIProperty
     private let titleLabel: UILabel = {
@@ -38,7 +42,7 @@ class SettingsViewController: UIViewController {
     }()
     
     private let segmentedControl: UISegmentedControl = {
-        let segmentedControl = UISegmentedControl(items: ["Celsius", "Fahrenheit"])
+        let segmentedControl = UISegmentedControl(items: ["°C", "°F"])
         segmentedControl.selectedSegmentIndex = 0
         
         return segmentedControl
@@ -83,11 +87,21 @@ extension SettingsViewController {
         super.viewDidLoad()
         
         setupUI()
+        bind()
     }
 }
 
 // MARK: - Method
 extension SettingsViewController {
+    
+    private func bind() {
+        segmentedControl.rx.selectedSegmentIndex
+            .subscribe(onNext: { unit in
+                self.viewModel?.input.accept(.setUnitButtonTap(unit))
+            })
+            .disposed(by: disposeBag)
+        
+    }
     
     private func setupUI() {
         view.backgroundColor = .white
