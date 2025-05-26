@@ -106,7 +106,13 @@ class MainCell: UICollectionViewCell {
     func bindAddress(with viewModel: ViewModel) {
         viewModel.regionCodeRelay
             .asDriver(onErrorJustReturn: [])
-            .map { $0.first?.addressName ?? "주소 없음" }
+            //.map { $0.first?.addressName ?? "주소 없음" }
+            .map {
+                guard let region2DepthName = $0.first?.region2DepthName else { return "주소 없음" }
+                guard let region3DepthName = $0.first?.region3DepthName else { return "주소 없음" }
+                
+                return region2DepthName + " " + region3DepthName
+            }
             .drive(cityLabel.rx.text)
             .disposed(by: disposeBag)
     }

@@ -16,6 +16,7 @@ class MainViewModel {
     
     enum Input {
         case settingButtonTap
+        case searchButtonTap
         case changeCoordinate
         case searchAddressData(AddressData.Document.Address)
         case setUnitButtonTap(Int)
@@ -23,6 +24,8 @@ class MainViewModel {
     
     struct Output {
         let showSettingMenu = PublishRelay<Void>()
+        let showSearchView = PublishRelay<Void>()
+        
         let mainCellData = BehaviorRelay<WeatherResponse?>(value: nil)
 
         let tenDayForecastCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
@@ -57,6 +60,7 @@ class MainViewModel {
     
     init(locationViewModel: ViewModel ) {
         self.locationViewModel = locationViewModel
+        applyDummyData() // 더미데이터 생성 메소드
         transform()
         setUpSideMenuNavigationVC()
         loadWeatherResponseData()
@@ -65,13 +69,19 @@ class MainViewModel {
     // 들어온 Input을 Output으로 변환하는 메서드
     private func transform() {
         self.input
+            // 바인트에서 subscribe 바꾼거 트라블슈팅 넣어야됨
             //.bind(onNext: { [weak self] input in
+        
+            // 재진입 문제를 해결하기 위해 이벤트를 비동기적으로 전달하도록 처리
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] input in
                 guard let self else { return }
                 
                 switch input {
                 case .settingButtonTap:
                     output.showSettingMenu.accept(())
+                case .searchButtonTap:
+                    output.showSearchView.accept(())
                 case .changeCoordinate:
                     self.locationViewModel.fetchRegionCode(longitude: longitude.value, latitude: latitude.value)
                     self.loadWeatherResponseData()
@@ -106,30 +116,36 @@ class MainViewModel {
     }
     
     // WeatherForecast 모델의 정보를 받아와 필요한 곳으로 보내는 메서드
-//    private func loadForecastListData() {
-//        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude, lon: longitude)
-//            .subscribe { weather, data in
-//                var image = [UIImage]()
-//                data.forEach {
-//                    guard let changedData = UIImage(data: $0) else { return }
-//                    image.append(changedData)
-//                }
-//                
-//                self.transformForecastListData(data: weather.list)
-//                
-//                image = [UIImage](image.prefix(12))
-//                var list = [ForecastList](weather.list.prefix(12))
-//                
-//                list.removeFirst(2)
-//                image.removeFirst(2)
-//                
-//                let tenResult = tenDayForecastData(forecastList: list, weatherIcons: image)
-//                self.output.tenDayForecastCellData.accept(tenResult)
-//            } onFailure: { error in
-//                print(error)
-//            }.disposed(by: disposeBag)
-//
-//    }
+    // WeatherResponse 모델의 정보를 받아오는 메서드 loadForecastListData
+    private func loadForecastListData() {
+        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude, lon: longitude)
+            .subscribe(onSuccess: { [weak self] weather, data in
+                guard let self else { return }
+//                print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
+
+                var image = [UIImage]()
+                data.forEach {
+                    if let changedData = UIImage(data: $0) {
+                        image.append(changedData)
+                    }
+                }
+                
+                self.transformForecastListData(data: weather.list)
+
+                var list = [ForecastList](weather.list.prefix(12))
+                image = [UIImage](image.prefix(12))
+
+                if list.count >= 2 { list.removeFirst(2) }
+                if image.count >= 2 { image.removeFirst(2) }
+
+                let result = tenDayForecastData(forecastList: list, weatherIcons: image)
+                self.output.NOHUNforecastListCellData.accept(result)
+
+            }, onFailure: { error in
+                print("loadForecastListData forecast 로딩 실패: \(error)")
+            })
+            .disposed(by: disposeBag)
+    }
     
     // ForecastList의 데이터를 CustomForecastList로 변환하는 메서드
     private func transformForecastListData(data: [ForecastList]) {
@@ -324,5 +340,99 @@ class MainViewModel {
         menuNavVC.presentationStyle = .menuSlideIn
         SideMenuManager.default.leftMenuNavigationController = menuNavVC
 //           SideMenuManager.default.leftMenuNavigationController?.setNavigationBarHidden(true, animated: true)
+    }
+}
+
+extension MainViewModel {
+
+    /// 더미 데이터 생성 메소드
+    func applyDummyData() {
+        // 1. 현재 날씨 더미
+        let dummyWeather = WeatherResponse(
+            coord: Coord(lon: 127.0, lat: 37.5),
+            weather: [Weather(id: 800, main: "Clear", description: "clear sky", icon: "01d")],
+            base: "stations",
+            main: Main(
+                temp: 24.0, feelsLike: 24.5, tempMin: 22.0, tempMax: 26.0,
+                pressure: 1012, humidity: 50, seaLevel: 1012, grndLevel: 1005
+            ),
+            visibility: 10000,
+            wind: Wind(speed: 3.0, deg: 180, gust: nil),
+            clouds: Clouds(all: 0),
+            dt: Int(Date().timeIntervalSince1970),
+            sys: Sys(country: "KR", sunrise: 1716600000, sunset: 1716648000),
+            timezone: 32400,
+            id: 1835847,
+            name: "서울",
+            cod: 200
+        )
+        output.mainCellData.accept(dummyWeather)
+
+        // 2. ForecastList 더미 6개 (3시간 간격 예보)
+        let dummyForecastList: [ForecastList] = (0..<10).map { createDummyForecastList(index: $0) }
+
+        let dummyIcon = UIImage(systemName: "sun.max.fill") ?? UIImage()
+        let iconList = Array(repeating: dummyIcon, count: dummyForecastList.count)
+
+        let forecastData = tenDayForecastData(
+            forecastList: dummyForecastList,
+            weatherIcons: iconList
+        )
+        output.NOHUNforecastListCellData.accept(forecastData)
+
+        // 3. CustomForecastList 더미 5일치
+        let dummyCustomForecast: [CustomForecastData] = (1...5).map { day in
+            let custom = CustomForecastList(
+                day: String(format: "%02d", day),
+                tempMin: 18.0 + Double(day),
+                tempMax: 28.0 + Double(day),
+                pop: Double(day) * 0.1,
+                icon: "01d"
+            )
+            return CustomForecastData(
+                forecastList: custom,
+                weatherIcons: dummyIcon
+            )
+        }
+
+        output.customForecastData.accept(dummyCustomForecast)
+    }
+
+    private func createDummyForecastList(index i: Int) -> ForecastList {
+        let baseDate = Date().addingTimeInterval(Double(i * 3 * 3600))
+        let main = MainClass(
+            temp: 23 + Double(i),
+            feelsLike: 23 + Double(i),
+            tempMin: 20,
+            tempMax: 28,
+            pressure: 1012,
+            seaLevel: 1012,
+            grndLevel: 1005,
+            humidity: 60,
+            tempKf: 0
+        )
+        let weather = ForecastWeather(id: 800, main: .clear, description: "clear", icon: "01d")
+        let clouds = ForecastClouds(all: 0)
+        let wind = ForecastWind(speed: 3.5, deg: 200, gust: 4.0)
+        let sys = ForecastSys(pod: .d)
+
+        return ForecastList(
+            dt: Int(baseDate.timeIntervalSince1970),
+            main: main,
+            weather: [weather],
+            clouds: clouds,
+            wind: wind,
+            visibility: 10000,
+            pop: 0.1,
+            rain: nil,
+            sys: sys,
+            dtTxt: dateToString(baseDate)
+        )
+    }
+
+    private func dateToString(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter.string(from: date)
     }
 }
