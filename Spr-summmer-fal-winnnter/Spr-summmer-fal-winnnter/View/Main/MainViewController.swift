@@ -140,6 +140,7 @@ extension MainViewController {
                 guard let self else { return }
 //                self.viewModel.latitude = "\(coordinate.latitude)"
 //                self.viewModel.longitude = "\(coordinate.longitude)"
+                guard let coordinate else { return }
                 self.viewModel.latitude.accept("\(coordinate.latitude)")
                 self.viewModel.longitude.accept("\(coordinate.longitude)")
                 self.viewModel.input.accept(.changeCoordinate)
