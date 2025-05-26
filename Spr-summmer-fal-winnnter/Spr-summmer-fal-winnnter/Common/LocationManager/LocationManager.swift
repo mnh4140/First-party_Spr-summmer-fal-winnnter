@@ -59,6 +59,10 @@ final class LocationManager: NSObject {
             }
         }
     }
+    
+//    func changeLocation(x: String, y: String) {
+//        self.coordinateSubject.onNext(<#T##element: CLLocationCoordinate2D##CLLocationCoordinate2D#>)
+//    }
 }
 
 extension LocationManager: CLLocationManagerDelegate {
