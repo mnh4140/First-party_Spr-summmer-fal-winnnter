@@ -118,6 +118,10 @@ extension MainViewController {
 //        LocationManager.shared.coordinateSubject.subscribe{ [weak self] _ in
 //            self?.viewModel.input.accept(.changeCoordinate)
 //        }.disposed(by: disposeBag)
+        
+        /// - 좌표 정보 구독
+        /// - 좌표 정보가 바뀌면 좌표 정보를 viewModel에 전달
+        /// - input에도 정보 전달
         LocationManager.shared.coordinateSubject
             .subscribe { [weak self] coordinate in
                 guard let self else { return }
@@ -128,8 +132,6 @@ extension MainViewController {
             }.disposed(by: disposeBag)
     }
     
-
-    // UI 세팅 메서드
     /// 메인셀 선택 시, 검색 화면으로 넘어가는 기능
     func cellSelect() {
         //print("\t🌆 [메인 뷰컨] cellSelect 호출")
