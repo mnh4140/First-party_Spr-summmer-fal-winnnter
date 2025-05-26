@@ -194,6 +194,7 @@ extension MainViewController {
         }
     }
     
+    /// pull to refresh
     private func reloadMainCellData() {
         
         var isEnd: Bool = false
@@ -209,12 +210,14 @@ extension MainViewController {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] contentOffset in
                 guard let self = self else { return }
-                let contentHeight = self.weatherCollectionView.contentSize.height
-                let height = self.weatherCollectionView.frame.size.height
+                //let contentHeight = self.weatherCollectionView.contentSize.height
+                //let height = self.weatherCollectionView.frame.size.height
                 let yOffset = contentOffset.y
-
+                //print("yOffset : \(yOffset)")
+                //print("height : \(height)")
+                //print("contentHeight : \(contentHeight)")
                 // 바닥에 도달했는지 판단
-                if yOffset > contentHeight - height + 200  && isEnd {
+                if yOffset < -210  && isEnd {
                     print("스크롤 동작")
                     
                     // 더미 데이터 넣기
