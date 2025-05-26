@@ -60,9 +60,6 @@ final class LocationManager: NSObject {
         }
     }
     
-//    func changeLocation(x: String, y: String) {
-//        self.coordinateSubject.onNext(<#T##element: CLLocationCoordinate2D##CLLocationCoordinate2D#>)
-//    }
 }
 
 extension LocationManager: CLLocationManagerDelegate {
@@ -85,5 +82,21 @@ extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         // 에러 메시지를 ViewModel로 전달
         errorSubject.onNext("위치 가져오기 실패: \(error.localizedDescription)") // 에러 방출
+    }
+    
+    // 위치 정보 권한이 변경되면 동작하는 델리게이트 메소드
+    // 첫 앱 실행 시, 권한을 허용해도 처음 한번만 위치를 가져와서 주소를 못가져옴
+    // 따라서 권한이 허용으로 변경되면 다시 위치 정보를 가져오는 메소드를 실행하게 설정해야됨
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        let status = manager.authorizationStatus
+        switch status {
+        case .authorizedWhenInUse, .authorizedAlways:
+            print("권한 허용됨 → 위치 요청 실행")
+            manager.requestLocation() // 위치 정보 요청
+        case .denied, .restricted:
+            errorSubject.onNext("위치 권한이 거부되었습니다.")
+        default:
+            break
+        }
     }
 }
