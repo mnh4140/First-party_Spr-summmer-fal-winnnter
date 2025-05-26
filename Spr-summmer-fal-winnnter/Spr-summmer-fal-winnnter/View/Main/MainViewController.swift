@@ -183,11 +183,13 @@ extension MainViewController {
         
         self.navigationItem.rightBarButtonItem = searchButton
         
+        self.navigationController?.navigationBar.barTintColor = UIColor(red: 154/255, green: 203/255, blue: 208/255, alpha: 1.0)
+        
         view.backgroundColor = UIColor(red: 154/255, green: 203/255, blue: 208/255, alpha: 1.0)
         view.addSubview(weatherCollectionView)
         
         weatherCollectionView.snp.makeConstraints {
-            $0.height.width.equalTo(view.safeAreaLayoutGuide).inset(32)
+            $0.height.width.equalTo(view.safeAreaLayoutGuide)
             $0.center.equalToSuperview()
         }
     }
@@ -309,6 +311,7 @@ extension MainViewController: UICollectionViewDataSource {
             subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
         
         let decorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "section-background-element-kind")
         
@@ -346,6 +349,7 @@ extension MainViewController: UICollectionViewDataSource {
         section.interGroupSpacing = -30
         section.decorationItems = [decorationItem]
         section.boundarySupplementaryItems = [header]
+        section.contentInsets = .init(top: 0, leading: 30, bottom: 0, trailing: 30)
         
         return section
     }
@@ -359,7 +363,7 @@ extension MainViewController: UICollectionViewDataSource {
         
         let group = NSCollectionLayoutGroup.vertical(
             layoutSize: .init(widthDimension: .fractionalWidth(1),
-                              heightDimension: .fractionalWidth(0.6)),
+                              heightDimension: .fractionalWidth(0.55)),
             subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
