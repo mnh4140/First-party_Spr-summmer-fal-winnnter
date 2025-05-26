@@ -57,7 +57,7 @@ class MainViewModel {
         //print("📋 [메인 모델] MainViewModel 초기화")
         transform()
         setUpSideMenuNavigationVC()
-        loadWeatherResponseData()
+//        loadWeatherResponseData()
         //loadForecastListData()
     }
     
@@ -77,7 +77,7 @@ class MainViewModel {
 //                    print("\t\t📋 [메인 모델] MainViewModel transform changeCoordinate:")
 //                    print("\t\t📋 [메인 모델] MainViewModel transform 좌표 값 받아옴 : \(self.latitude), \(self.longitude)")
                     self.locationViewModel.fetchRegionCode(longitude: self.longitude, latitude: self.latitude)
-                    self.NOHUNloadWeatherResponseData()
+//                    self.NOHUNloadWeatherResponseData()
 //                    print("\t\t\t📋 [메인 모델] NOHUNloadWeatherResponseData 실행")
                     self.NOHUNloadForecastListData()
 //                    print("\t\t\t📋 [메인 모델] NOHUNloadForecastListData 실행")
@@ -270,29 +270,29 @@ class MainViewModel {
             .disposed(by: disposeBag)
     }
     
-    private func loadWeatherResponseData() {
-        //print("\t📋 [메인 모델] MainViewModel loadWeatherResponseData 실행")
-        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
-            .subscribe { [weak self] (weather, imageURL) in
-                guard let self else { return }
-                self.output.mainCellData.accept(weather)
-            } onFailure: { error in
-                print(error)
-            }.disposed(by: disposeBag)
-    }
-    
-
-    // 세팅 버튼을 클릭하면 세팅 뷰를 띄워주는 메서드
-    private func NOHUNloadWeatherResponseData() {
-        //print("\t📋 [메인 모델] MainViewModel loadWeatherResponseData 실행")
-        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
-            .subscribe { [weak self] (weather, imageURL) in
-                guard let self else { return }
-                self.output.mainCellData.accept(weather)
-            } onFailure: { error in
-                print(error)
-            }.disposed(by: disposeBag)
-    }
+//    private func loadWeatherResponseData() {
+//        //print("\t📋 [메인 모델] MainViewModel loadWeatherResponseData 실행")
+//        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
+//            .subscribe { [weak self] (weather, imageURL) in
+//                guard let self else { return }
+//                self.output.mainCellData.accept(weather)
+//            } onFailure: { error in
+//                print(error)
+//            }.disposed(by: disposeBag)
+//    }
+//    
+//
+//    // 세팅 버튼을 클릭하면 세팅 뷰를 띄워주는 메서드
+//    private func NOHUNloadWeatherResponseData() {
+//        //print("\t📋 [메인 모델] MainViewModel loadWeatherResponseData 실행")
+//        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
+//            .subscribe { [weak self] (weather, imageURL) in
+//                guard let self else { return }
+//                self.output.mainCellData.accept(weather)
+//            } onFailure: { error in
+//                print(error)
+//            }.disposed(by: disposeBag)
+//    }
 
     func showSettingMenu(on vc: UIViewController) {
         //print("\t📋 [메인 모델] howSettingMenu 실행")

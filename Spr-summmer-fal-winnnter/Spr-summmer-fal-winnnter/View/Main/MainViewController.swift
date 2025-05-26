@@ -225,10 +225,10 @@ extension MainViewController: UICollectionViewDataSource {
         case .main:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCell.identifier, for: indexPath) as? MainCell else { return .init() }
             
-            guard let weather = viewModel.output.mainCellData.value else { return cell }
+            guard let forecastData = self.viewModel.output.NOHUNforecastListCellData.value else { return cell }
             guard let customForecast = self.viewModel.output.customForecastData.value else { return cell }
                 
-            cell.setText(weather: weather)
+            cell.setText(data: forecastData.forecastList[indexPath.row])
             cell.setMinMaxTempForDay(temp: customForecast[indexPath.row].forecastList)
             
             // 여기서 주소도 전달
@@ -247,14 +247,14 @@ extension MainViewController: UICollectionViewDataSource {
             //원래 코드
 //            guard let data = self.viewModel.output.forecastListCellData.value else { return cell }
             //print("\n 받아온 데이터 \n \(self.viewModel.output.NOHUNforecastListCellData.value)")
-            guard let data = self.viewModel.output.NOHUNforecastListCellData.value else { return cell }
+            guard let forecastData = self.viewModel.output.NOHUNforecastListCellData.value else { return cell }
             
             if indexPath.row == 0 {
-                cell.setFirstCell(data: data.forecastList[indexPath.row],
-                                  icon: data.weatherIcons[indexPath.row])
+                cell.setFirstCell(data: forecastData.forecastList[indexPath.row],
+                                  icon: forecastData.weatherIcons[indexPath.row])
             } else {
-                cell.setCell(data: data.forecastList[indexPath.row],
-                             icon: data.weatherIcons[indexPath.row])
+                cell.setCell(data: forecastData.forecastList[indexPath.row],
+                             icon: forecastData.weatherIcons[indexPath.row])
             }
             
             return cell
