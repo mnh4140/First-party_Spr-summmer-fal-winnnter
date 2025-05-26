@@ -12,14 +12,28 @@ class LocationNetworkManager {
     static let shared = LocationNetworkManager()
     private init() {}
     
-    private let apiKey = "737335414faed8edaaa51e0badb4fb08"
+    private lazy var apiKey: String? = {
+        guard let filePath = Bundle.main.path(forResource: "Info", ofType: "plist"),
+              let plist = NSDictionary(contentsOfFile: filePath),
+              let key = plist["KakaoApiKey"] as? String else {
+            print("❌ Info.plist에서 KakaoApiKey를 불러오지 못했습니다.")
+            return nil
+        }
+        return key
+    }()
 
     func fetchData<T: Decodable>(url: URL) -> Single<T> {
         return Single.create { single in
+            
+            // apiKey 옵셔널 언래핑
+            guard let apiKey = self.apiKey else {
+                return Disposables.create()
+            }
+            
             var request = URLRequest(url: url)
             request.httpMethod = "GET"
             request.allHTTPHeaderFields = [
-                "Authorization": "KakaoAK \(self.apiKey)"
+                "Authorization": "KakaoAK \(apiKey)"
             ]
             
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
