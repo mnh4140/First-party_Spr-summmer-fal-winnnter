@@ -21,21 +21,21 @@ class MainViewModel {
     struct Output {
         let showSettingMenu = PublishRelay<Void>()
         let mainCellData = BehaviorRelay<WeatherResponse?>(value: nil)
-        let tenForecastCellData = BehaviorRelay<CustomForecastData?>(value: nil)
-        let customForecastCellData = BehaviorRelay<[AllForecastData]?>(value: nil)
+        let tenDayForecastCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
+        let customForecastData = BehaviorRelay<[CustomForecastData]?>(value: nil)
     }
     
-    struct CustomForecastData {
+    struct tenDayForecastData {
         let forecastList: [ForecastList]
         let weatherIcons: [UIImage]
     }
     
-    struct AllForecastData {
+    struct CustomForecastData {
         let forecastList: CustomForecastList
         let weatherIcons: UIImage
     }
     
-    private var customForecastDatas = [AllForecastData]()
+    private var customForecastDatas = [CustomForecastData]()
     private let disposeBag = DisposeBag()
     
     let input = PublishRelay<Input>()
@@ -78,8 +78,8 @@ class MainViewModel {
                 list.removeFirst(2)
                 image.removeFirst(2)
                 
-                let tenResult = CustomForecastData(forecastList: list, weatherIcons: image)
-                self.output.tenForecastCellData.accept(tenResult)
+                let tenResult = tenDayForecastData(forecastList: list, weatherIcons: image)
+                self.output.tenDayForecastCellData.accept(tenResult)
             } onFailure: { error in
                 print(error)
             }.disposed(by: disposeBag)
@@ -88,11 +88,15 @@ class MainViewModel {
     
     // ForecastList의 데이터를 CustomForecastList로 변환하는 메서드
     private func transformForecastListData(data: [ForecastList]) {
-        let firstHour = String(data[0].dtTxt.components(separatedBy: " ")[1].prefix(2))
-        var list = data
-        var box = [ForecastList]()
-        var result = [[ForecastList]]()
+        var list = data                 // removeFirst 메서드를 사용하기 위해 변수 생성
+        var box = [ForecastList]()      // result에 들어갈 데이터를 하루 단위로 담았다가 배열로 보내주기 위해 생성
+        var result = [[ForecastList]]() // 데이터를 하루 단위의 배열로 가지게 될 변수
         
+        // 첫 데이터의 시간 체크
+        var firstHour = String(list[0].dtTxt.components(separatedBy: " ")[1].prefix(2))
+        
+        // ForecastList는 6시간 전의 데이터부터 불러옴
+        // 그래서 만약 이전 시간이 어제일 경우 데이터 삭제
         switch firstHour {
         case "18":
             list.removeFirst()
@@ -103,7 +107,11 @@ class MainViewModel {
             break
         }
         
-        switch String(list[0].dtTxt.components(separatedBy: " ")[1].prefix(2)) {
+        // 첫 데이터 시간 체크 갱신
+        firstHour = String(list[0].dtTxt.components(separatedBy: " ")[1].prefix(2))
+        
+        // 첫 날(오늘) 데이터를 box에 담음
+        switch firstHour {
         case "00":
             box.append(list.removeFirst())
             fallthrough
@@ -131,9 +139,12 @@ class MainViewModel {
             break
         }
         
+        // 첫 날의 데이터를 배열로 result에 담고
+        // box의 데이터 삭제
         result.append(box)
         box.removeAll()
         
+        // 위 작업을 하루 단위로 반복
         while list.count > 1 {
             box.append(list.removeFirst())
             if box.count == 8 {
@@ -142,12 +153,15 @@ class MainViewModel {
             }
         }
         
+        // 반복문을 빠져나와 남은 데이터가 있을 시 result에 담음
         if box.count > 0 {
             result.append(box)
         }
         
+        // customForecastList로 변환해 담을 변수
         var customForecastList = [CustomForecastList]()
         
+        // result -> customForecastList 변환 작업
         result.forEach {
             let day = String($0[0].dtTxt.split(separator: " ")[0].suffix(2))
             let tempMin = $0.sorted(by: { $0.main.tempMin < $1.main.tempMin })[0].main.tempMin
@@ -162,6 +176,10 @@ class MainViewModel {
                                                      icon: icon))
         }
         
+        // 데이터를 담을 변수 초기화
+        self.customForecastDatas = []
+        
+        // Icon을 불러오는 메서드 실행
         customForecastList.forEach {
             self.fetchCustomForecastListIcon(data: $0)
         }
@@ -170,15 +188,21 @@ class MainViewModel {
     
     // CustomForecastList의 데이터 중 Icon을 받아오는 메서드
     private func fetchCustomForecastListIcon(data: CustomForecastList) {
+        
+        // zip을 사용하기 위해 Single로 생성
         let customForecast = Single<CustomForecastList>.just(data)
         let icon = NetworkManager.shared.fetchIconImageData(iconIds: data.icon)
         
         Single.zip(customForecast, icon)
-            .subscribe { custom, data in
-                guard let image = UIImage(data: data) else { return }
-                self.customForecastDatas.append(AllForecastData(forecastList: custom, weatherIcons: image))
+            .subscribe { customForecast, imageData in
+                guard let image = UIImage(data: imageData) else { return }
+                
+                // 데이터를 변수에 추가
+                self.customForecastDatas.append(CustomForecastData(forecastList: customForecast, weatherIcons: image))
+                
+                // 5일의 데이터가 쌓이면 accept
                 if self.customForecastDatas.count == 5 {
-                    self.output.customForecastCellData.accept(self.customForecastDatas)
+                    self.output.customForecastData.accept(self.customForecastDatas)
                 }
             } onFailure: { error in
                 print(error)
