@@ -40,7 +40,6 @@ class TempProgressBar: UIView {
         view.backgroundColor = .white
         view.clipsToBounds = true
         view.layer.cornerRadius = 2.5
-        view.isHidden = true
         
         return view
     }()
@@ -66,7 +65,7 @@ class TempProgressBar: UIView {
     }
     
     // 최고, 최저 기온에 맞게 파란 영역을 잡아주는 메서드
-    func update(minTemp: Double, maxTemp: Double) {
+    func update(currentTemp: Double, minTemp: Double, maxTemp: Double) {
         let sysRange = (Int(self.sysMin)...Int(self.sysMax)).count
         let tempRange = (Int(minTemp)...Int(maxTemp)).count
         
@@ -75,7 +74,14 @@ class TempProgressBar: UIView {
         layoutIfNeeded() // 레이아웃 강제 적용(frame 값을 받아 쓰기 위해)
         let persent = CGFloat(abs(minTemp - self.sysMin) / Double(sysRange))
         let leading = persent * backgroundBar.frame.width
+        let currentPersent = CGFloat(abs(currentTemp - self.sysMin) / Double(sysRange))
+        let currentLeading = currentPersent * backgroundBar.frame.width
         
+        currentTempPoint.snp.remakeConstraints {
+            $0.width.height.equalTo(5)
+            $0.top.bottom.equalToSuperview()
+            $0.leading.equalToSuperview().offset(currentLeading)
+        }
         fillBar.snp.remakeConstraints {
             $0.top.bottom.equalToSuperview()
             $0.leading.equalToSuperview().offset(leading)
@@ -88,21 +94,8 @@ class TempProgressBar: UIView {
     }
     
     // 현재 기온의 포인트를 표시하는 메서드
-    func updateCurrent(currentTemp: Double) {
-        let sysRange = (Int(self.sysMin)...Int(self.sysMax)).count
-        
-        layoutIfNeeded() // 레이아웃 강제 적용(frame 값을 받아 쓰기 위해)
-        let currentPersent = CGFloat(abs(currentTemp - self.sysMin) / Double(sysRange))
-        let currentLeading = currentPersent * backgroundBar.frame.width
-        
+    func setCurrentPoint() {
         currentTempPoint.isHidden = false
-        currentTempPoint.snp.makeConstraints {
-            $0.width.height.equalTo(5)
-            $0.top.bottom.equalToSuperview()
-            $0.leading.equalToSuperview().offset(currentLeading)
-        }
-        
-        layoutIfNeeded() // 레이아웃 강제 적용
     }
 }
 
