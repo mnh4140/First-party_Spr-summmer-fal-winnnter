@@ -26,7 +26,7 @@ final class LocationManager: NSObject {
     let coordinateSubject = BehaviorSubject<CLLocationCoordinate2D?>(value: nil)
 
     
-    var locationViewModel = ViewModel()
+    var locationViewModel = LocationViewModel()
     
     
     private override init() {

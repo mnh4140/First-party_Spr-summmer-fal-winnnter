@@ -17,7 +17,7 @@ class MainViewController: UIViewController {
     // Property
     private let disposeBag = DisposeBag()
     
-    let locationViewModel = ViewModel()
+    let locationViewModel = LocationViewModel()
     lazy var viewModel = MainViewModel(locationViewModel: locationViewModel)
     
     // MARK: - UIProperty

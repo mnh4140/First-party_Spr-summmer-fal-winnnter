@@ -103,7 +103,7 @@ class MainCell: UICollectionViewCell {
     }
     
     /// [위치] 주소 정보 바인딩
-    func bindAddress(with viewModel: ViewModel) {
+    func bindAddress(with viewModel: LocationViewModel) {
         viewModel.regionCodeRelay
             .asDriver(onErrorJustReturn: [])
             //.map { $0.first?.addressName ?? "주소 없음" }
