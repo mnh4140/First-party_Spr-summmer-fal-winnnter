@@ -34,7 +34,8 @@ class CellBackground: UICollectionReusableView {
         self.addSubview(backgroundView)
         
         backgroundView.snp.makeConstraints {
-            $0.width.equalToSuperview()
+//            $0.width.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
             $0.top.bottom.equalToSuperview().inset(10)
             $0.center.equalToSuperview()
         }

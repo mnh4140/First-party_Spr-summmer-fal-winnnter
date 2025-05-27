@@ -16,11 +16,16 @@ class MainViewModel {
     
     enum Input {
         case settingButtonTap
+        case searchButtonTap
         case changeCoordinate
+        case searchAddressData(AddressData.Document.Address)
+        case setUnitButtonTap(Int)
     }
     
     struct Output {
         let showSettingMenu = PublishRelay<Void>()
+        let showSearchView = PublishRelay<Void>()
+        
         let mainCellData = BehaviorRelay<WeatherResponse?>(value: nil)
 
         let tenDayForecastCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
@@ -43,72 +48,71 @@ class MainViewModel {
     private var customForecastDatas = [CustomForecastData]()
     private let disposeBag = DisposeBag()
     
+    let tempUnit = BehaviorRelay<Int>(value: 0) // 초기값은 0 : °C
+    
     let input = PublishRelay<Input>()
     let output = Output()
     
-    var latitude: String = ""
-    var longitude: String = ""
+    let latitude = BehaviorRelay<String>(value: "37.56")
+    let longitude = BehaviorRelay<String>(value: "127.4")
     
     let locationViewModel: ViewModel
     
-    //var locationViewModel = ViewModel()
     init(locationViewModel: ViewModel ) {
         self.locationViewModel = locationViewModel
-        //print("📋 [메인 모델] MainViewModel 초기화")
+        applyDummyData() // 더미데이터 생성 메소드
         transform()
         setUpSideMenuNavigationVC()
         loadWeatherResponseData()
-        //loadForecastListData()
     }
     
     // 들어온 Input을 Output으로 변환하는 메서드
     private func transform() {
-        //print("\t📋 [메인 모델] MainViewModel transform")
         self.input
+            // 바인트에서 subscribe 바꾼거 트라블슈팅 넣어야됨
             //.bind(onNext: { [weak self] input in
+        
+            // 재진입 문제를 해결하기 위해 이벤트를 비동기적으로 전달하도록 처리
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] input in
                 guard let self else { return }
                 
                 switch input {
                 case .settingButtonTap:
-//                    print("\t\t📋 [메인 모델] MainViewModel transform settingButtonTap:")
                     output.showSettingMenu.accept(())
+                case .searchButtonTap:
+                    output.showSearchView.accept(())
                 case .changeCoordinate:
-//                    print("\t\t📋 [메인 모델] MainViewModel transform changeCoordinate:")
-//                    print("\t\t📋 [메인 모델] MainViewModel transform 좌표 값 받아옴 : \(self.latitude), \(self.longitude)")
-                    self.locationViewModel.fetchRegionCode(longitude: self.longitude, latitude: self.latitude)
-                    self.NOHUNloadWeatherResponseData()
-//                    print("\t\t\t📋 [메인 모델] NOHUNloadWeatherResponseData 실행")
-                    self.NOHUNloadForecastListData()
-//                    print("\t\t\t📋 [메인 모델] NOHUNloadForecastListData 실행")
+                    self.locationViewModel.fetchRegionCode(longitude: longitude.value, latitude: latitude.value)
+                    self.loadWeatherResponseData()
+                    self.loadForecastListData()
+                case .searchAddressData(let selectedAddress):
+                    guard let x = selectedAddress.x,
+                          let y = selectedAddress.y else { return }
+                    self.locationViewModel.fetchRegionCode(longitude: x, latitude: y)
+                    // 현재 날씨 데이터를 가져오는 로직
+                    NetworkManager.shared.fetchCurrentWeatherData(lat: y, lon: x, tempUnit: tempUnit.value)
+                        .subscribe(onSuccess:  { [weak self] (weather, imageURL) in
+                            //print("불러온 날씨 데이터 : \n\(weather)")
+                            self?.output.mainCellData.accept(weather)
+                        }, onFailure: { error in
+                            print(error)
+                        }).disposed(by: self.disposeBag)
+                    
+                    // 뷰모델에 위도 경도 값 주입
+                    self.latitude.accept(y)
+                    self.longitude.accept(x)
+                    print("위도 경도 \(self.latitude.value), \(self.longitude.value)")
+                    self.input.accept(.changeCoordinate)
+                case .setUnitButtonTap(let unit):
+                    self.tempUnit.accept(unit)
+                    print(unit)
+                    print(latitude.value, longitude.value)
+                    self.loadWeatherResponseData()
+                    self.loadForecastListData()
+                    
                 }
             }).disposed(by: disposeBag)
-    }
-    
-    // WeatherForecast 모델의 정보를 받아와 필요한 곳으로 보내는 메서드
-    private func loadForecastListData() {
-        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude, lon: longitude)
-            .subscribe { weather, data in
-                var image = [UIImage]()
-                data.forEach {
-                    guard let changedData = UIImage(data: $0) else { return }
-                    image.append(changedData)
-                }
-                
-                self.transformForecastListData(data: weather.list)
-                
-                image = [UIImage](image.prefix(12))
-                var list = [ForecastList](weather.list.prefix(12))
-                
-                list.removeFirst(2)
-                image.removeFirst(2)
-                
-                let tenResult = tenDayForecastData(forecastList: list, weatherIcons: image)
-                self.output.tenDayForecastCellData.accept(tenResult)
-            } onFailure: { error in
-                print(error)
-            }.disposed(by: disposeBag)
-
     }
     
     // ForecastList의 데이터를 CustomForecastList로 변환하는 메서드
@@ -235,13 +239,12 @@ class MainViewModel {
 
     }
     
-    // WeatherResponse 모델의 정보를 받아오는 메서드
-    private func NOHUNloadForecastListData() {
-        print("\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData")
-        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude, lon: longitude)
+    // WeatherResponse 모델의 정보를 받아오는 메서드 loadForecastListData
+    private func loadForecastListData() {
+        NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude.value, lon: longitude.value, tempUnit: tempUnit.value)
             .subscribe(onSuccess: { [weak self] weather, data in
                 guard let self else { return }
-//                print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
+                // print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
 
                 var image = [UIImage]()
                 data.forEach {
@@ -260,54 +263,147 @@ class MainViewModel {
 
                 let result = tenDayForecastData(forecastList: list, weatherIcons: image)
                 self.output.NOHUNforecastListCellData.accept(result)
-                
-//                print("\t\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData NOHUNforecastListCellData.accept 성공!")
-//                print("\n 받아온 데이터 \n/\(result.forecastList)")
 
             }, onFailure: { error in
-//                print("\t\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData forecast 로딩 실패: \(error)")
+                print("loadForecastListData forecast 로딩 실패: \(error)")
             })
             .disposed(by: disposeBag)
     }
     
     private func loadWeatherResponseData() {
-        //print("\t📋 [메인 모델] MainViewModel loadWeatherResponseData 실행")
-        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
+        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude.value, lon: longitude.value, tempUnit: tempUnit.value)
             .subscribe { [weak self] (weather, imageURL) in
                 guard let self else { return }
+                
                 self.output.mainCellData.accept(weather)
+                print("날씨 API 호출: lat=\(latitude), lon=\(longitude)")
+                
             } onFailure: { error in
                 print(error)
             }.disposed(by: disposeBag)
     }
     
-
+//    private func NOHUNloadWeatherResponseData() {
+//        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
+//            .subscribe { [weak self] (weather, imageURL) in
+//                guard let self else { return }
+//                self.output.mainCellData.accept(weather)
+//            } onFailure: { error in
+//                print(error)
+//            }.disposed(by: disposeBag)
+//    }
+    
     // 세팅 버튼을 클릭하면 세팅 뷰를 띄워주는 메서드
-    private func NOHUNloadWeatherResponseData() {
-        //print("\t📋 [메인 모델] MainViewModel loadWeatherResponseData 실행")
-        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
-            .subscribe { [weak self] (weather, imageURL) in
-                guard let self else { return }
-                self.output.mainCellData.accept(weather)
-            } onFailure: { error in
-                print(error)
-            }.disposed(by: disposeBag)
-    }
-
     func showSettingMenu(on vc: UIViewController) {
-        //print("\t📋 [메인 모델] howSettingMenu 실행")
         guard let sideMenu = SideMenuManager.default.leftMenuNavigationController else { return }
         vc.present(sideMenu, animated: true)
     }
     
     // 세팅 뷰 사이드메뉴 라이브러리 설정
     private func setUpSideMenuNavigationVC() {
-        //print("\t📋 [메인 모델] MainViewModel setUpSideMenuNavigationVC 실행")
-        let menuNavVC = SideMenuNavigationController(rootViewController: SettingsViewController())
+        let settingViewController = SettingsViewController()
+        settingViewController.viewModel = self
+        
+        let menuNavVC = SideMenuNavigationController(rootViewController: settingViewController)
+        
         
         menuNavVC.menuWidth = UIScreen.main.bounds.width * 0.7
         menuNavVC.presentationStyle = .menuSlideIn
         SideMenuManager.default.leftMenuNavigationController = menuNavVC
 //           SideMenuManager.default.leftMenuNavigationController?.setNavigationBarHidden(true, animated: true)
+    }
+}
+
+extension MainViewModel {
+
+    /// 더미 데이터 생성 메소드
+    func applyDummyData() {
+        // 1. 현재 날씨 더미
+        let dummyWeather = WeatherResponse(
+            coord: Coord(lon: 127.0, lat: 37.5),
+            weather: [Weather(id: 800, main: "Clear", description: "clear sky", icon: "01d")],
+            base: "stations",
+            main: Main(
+                temp: 24.0, feelsLike: 24.5, tempMin: 22.0, tempMax: 26.0,
+                pressure: 1012, humidity: 50, seaLevel: 1012, grndLevel: 1005
+            ),
+            visibility: 10000,
+            wind: Wind(speed: 3.0, deg: 180, gust: nil),
+            clouds: Clouds(all: 0),
+            dt: Int(Date().timeIntervalSince1970),
+            sys: Sys(country: "KR", sunrise: 1716600000, sunset: 1716648000),
+            timezone: 32400,
+            id: 1835847,
+            name: "서울",
+            cod: 200
+        )
+        output.mainCellData.accept(dummyWeather)
+
+        // 2. ForecastList 더미 6개 (3시간 간격 예보)
+        let dummyForecastList: [ForecastList] = (0..<10).map { createDummyForecastList(index: $0) }
+
+        let dummyIcon = UIImage(systemName: "sun.max.fill") ?? UIImage()
+        let iconList = Array(repeating: dummyIcon, count: dummyForecastList.count)
+
+        let forecastData = tenDayForecastData(
+            forecastList: dummyForecastList,
+            weatherIcons: iconList
+        )
+        output.NOHUNforecastListCellData.accept(forecastData)
+
+        // 3. CustomForecastList 더미 5일치
+        let dummyCustomForecast: [CustomForecastData] = (1...5).map { day in
+            let custom = CustomForecastList(
+                day: String(format: "%02d", day),
+                tempMin: 18.0 + Double(day),
+                tempMax: 28.0 + Double(day),
+                pop: Double(day) * 0.1,
+                icon: "01d"
+            )
+            return CustomForecastData(
+                forecastList: custom,
+                weatherIcons: dummyIcon
+            )
+        }
+
+        output.customForecastData.accept(dummyCustomForecast)
+    }
+
+    private func createDummyForecastList(index i: Int) -> ForecastList {
+        let baseDate = Date().addingTimeInterval(Double(i * 3 * 3600))
+        let main = MainClass(
+            temp: 23 + Double(i),
+            feelsLike: 23 + Double(i),
+            tempMin: 20,
+            tempMax: 28,
+            pressure: 1012,
+            seaLevel: 1012,
+            grndLevel: 1005,
+            humidity: 60,
+            tempKf: 0
+        )
+        let weather = ForecastWeather(id: 800, main: .clear, description: "clear", icon: "01d")
+        let clouds = ForecastClouds(all: 0)
+        let wind = ForecastWind(speed: 3.5, deg: 200, gust: 4.0)
+        let sys = ForecastSys(pod: .d)
+
+        return ForecastList(
+            dt: Int(baseDate.timeIntervalSince1970),
+            main: main,
+            weather: [weather],
+            clouds: clouds,
+            wind: wind,
+            visibility: 10000,
+            pop: 0.1,
+            rain: nil,
+            sys: sys,
+            dtTxt: dateToString(baseDate)
+        )
+    }
+
+    private func dateToString(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter.string(from: date)
     }
 }

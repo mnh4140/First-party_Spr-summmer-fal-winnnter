@@ -17,7 +17,7 @@ class MainViewController: UIViewController {
     // Property
     private let disposeBag = DisposeBag()
     
-    let locationViewModel = ViewModel()
+    let locationViewModel = LocationViewModel()
     lazy var viewModel = MainViewModel(locationViewModel: locationViewModel)
     
     // MARK: - UIProperty
@@ -54,7 +54,6 @@ extension MainViewController {
         inputBind()
         //bindLocationManager()
         LocationManager.shared.requestLocation()
-        cellSelect()
         
         //출력 확인용
         //clothesViewModel.update(temp: 4.0, condition: "Clear")     // very cold
@@ -64,6 +63,7 @@ extension MainViewController {
         //clothesViewModel.update(temp: 31.0, condition: "Clear")    // hot
         //clothesViewModel.update(temp: 18.0, condition: "Rain")     // rain
         //clothesViewModel.update(temp: -2.0, condition: "Snow")     // snow
+        reloadMainCellData()
     }
 }
 
@@ -81,6 +81,18 @@ extension MainViewController {
                 //print("\t\t🌆 [메인 뷰컨] output.showSettingMenu 호출")
             }.disposed(by: disposeBag)
         
+        viewModel.output.showSearchView
+            .subscribe { [weak self] _ in
+                guard let self else { return }
+                let searchVC = SearchViewController(
+                    viewModel: self.locationViewModel,
+                    mainViewModel: self.viewModel
+                )
+//                searchVC.viewModel = self.locationViewModel // 같은 인스턴스 전달
+//                searchVC.mainViewModel = self.viewModel
+                self.navigationController?.pushViewController(searchVC, animated: true)
+            }.disposed(by: disposeBag)
+        
         // 메인 셀 데이터가 불러와지면
         // MARK: - 기존 코드
 
@@ -89,13 +101,6 @@ extension MainViewController {
                 self?.weatherCollectionView.reloadData()
                 //print("\t\t🌆 [메인 뷰컨] output.mainCellData 호출")
             }.disposed(by: disposeBag)
-        
-        // 원래 코드
-//        viewModel.output.forecastListCellData
-//            .subscribe { [weak self] weather in
-//                guard let self else { return }
-//                self.weatherCollectionView.reloadData()
-//            }.disposed(by: disposeBag)
         
         viewModel.output.NOHUNforecastListCellData
             .subscribe { [weak self] weather in
@@ -116,20 +121,27 @@ extension MainViewController {
                 self?.weatherCollectionView.reloadData()
 
             }.disposed(by: disposeBag)
+        
+        viewModel.tempUnit
+            .subscribe { [weak self] _ in
+                self?.weatherCollectionView.reloadData()
+            }.disposed(by: disposeBag)
     }
     
     // MainViewModel에게 Input을 보내는 메서드
     private func inputBind() {
-        //print("\t🌆 [메인 뷰컨] inputBind 호출")
+        // 메뉴버튼 클릭
         self.navigationItem.leftBarButtonItem?.rx.tap.subscribe { [weak self] _ in
             guard let self else { return }
             self.viewModel.input.accept(.settingButtonTap)
             //print("\t\t🌆 [메인 뷰컨] 설정 버튼 클릭됨")
         }.disposed(by: disposeBag)
         
-//        LocationManager.shared.coordinateSubject.subscribe{ [weak self] _ in
-//            self?.viewModel.input.accept(.changeCoordinate)
-//        }.disposed(by: disposeBag)
+        // 검색 버튼 클릭
+        self.navigationItem.rightBarButtonItem?.rx.tap.subscribe{ [weak self] _ in
+            guard let self else { return }
+            self.viewModel.input.accept(.searchButtonTap)
+        }.disposed(by: disposeBag)
         
         /// - 좌표 정보 구독
         /// - 좌표 정보가 바뀌면 좌표 정보를 viewModel에 전달
@@ -137,52 +149,31 @@ extension MainViewController {
         LocationManager.shared.coordinateSubject
             .subscribe { [weak self] coordinate in
                 guard let self else { return }
-                self.viewModel.latitude = "\(coordinate.latitude)"
-                self.viewModel.longitude = "\(coordinate.longitude)"
+//                self.viewModel.latitude = "\(coordinate.latitude)"
+//                self.viewModel.longitude = "\(coordinate.longitude)"
+                guard let coordinate else { return }
+                self.viewModel.latitude.accept("\(coordinate.latitude)")
+                self.viewModel.longitude.accept("\(coordinate.longitude)")
                 self.viewModel.input.accept(.changeCoordinate)
                 //print("\t\t🌆 [메인 뷰컨] 좌표 변경 감지")
             }.disposed(by: disposeBag)
     }
     
     /// 메인셀 선택 시, 검색 화면으로 넘어가는 기능
-    func cellSelect() {
-        //print("\t🌆 [메인 뷰컨] cellSelect 호출")
-        weatherCollectionView.rx.itemSelected
-            .subscribe(onNext: { indexPath in
-                if MainViewController.Section(rawValue: indexPath.section) == .main {
-                    //print("\t\t🌆 [메인 뷰컨] 메인 셀이 눌렸습니다.")
-                    let searchVC = SearchViewController()
-                        searchVC.viewModel = self.locationViewModel // 같은 인스턴스 전달
-                    searchVC.mainViewModel = self.viewModel
-                    self.navigationController?.pushViewController(searchVC, animated: true)
-                }
-            }).disposed(by: disposeBag)
-        
-        
-    }
-    
-    /// - 위치 관리자에게 사용자의 위도 경도 데이터 받아오는 기능
-//    func bindLocationManager() {
-//        print("\t🌆 [메인 뷰컨] bindLocationManager 호출")
-//        // LocationManager의 coordinateSubject 구독
-//        // 현재 위치 정보가 변경되면 onNext 콜백이 실행
-//        // 위도 경도를 받아오고
-//        // fetchRegionCode 를 호출하여, 위도 경도를 주소로 변경된 값을 가져옴
-//        LocationManager.shared.coordinateSubject
-//            .subscribe(onNext: { [weak self] coordinate in
-//                let longitude = "\(coordinate.longitude)"
-//                let latitude = "\(coordinate.latitude)"
-//                self?.locationViewModel.fetchRegionCode(longitude: longitude, latitude: latitude)
-//                //print("위도 경도는 longitude : \(longitude), latitude : \(latitude)")
-//                NetworkManager.shared.NOHUNfetchCurrentWeatherData(lat: latitude, lon: longitude)
-//                    .subscribe(onSuccess:  { (weather, imageURL) in
-//                        //print("불러온 날씨 데이터 : \(weather)")
-//                        self?.viewModel.output.mainCellData.accept(weather)
-//                    }, onFailure: { error in
-//                        print(error)
-//                    }).disposed(by: self?.disposeBag ?? DisposeBag())
-//                
+//    func cellSelect() {
+//        //print("\t🌆 [메인 뷰컨] cellSelect 호출")
+//        weatherCollectionView.rx.itemSelected
+//            .subscribe(onNext: { indexPath in
+//                if MainViewController.Section(rawValue: indexPath.section) == .main {
+//                    //print("\t\t🌆 [메인 뷰컨] 메인 셀이 눌렸습니다.")
+//                    let searchVC = SearchViewController()
+//                        searchVC.viewModel = self.locationViewModel // 같은 인스턴스 전달
+//                    searchVC.mainViewModel = self.viewModel
+//                    self.navigationController?.pushViewController(searchVC, animated: true)
+//                }
 //            }).disposed(by: disposeBag)
+//        
+//        
 //    }
 
     private func setupUI() {
@@ -195,13 +186,69 @@ extension MainViewController {
         
         self.navigationItem.leftBarButtonItem = menuButton
         
+        let searchButton = UIBarButtonItem(
+            image: UIImage(systemName: "magnifyingglass"),
+            style: .plain,
+            target: nil,
+            action: nil
+        )
+        searchButton.tintColor = .black
+        
+        self.navigationItem.rightBarButtonItem = searchButton
+        
+        self.navigationController?.navigationBar.barTintColor = UIColor(red: 154/255, green: 203/255, blue: 208/255, alpha: 1.0)
+        
         view.backgroundColor = UIColor(red: 154/255, green: 203/255, blue: 208/255, alpha: 1.0)
         view.addSubview(weatherCollectionView)
         
         weatherCollectionView.snp.makeConstraints {
-            $0.height.width.equalTo(view.safeAreaLayoutGuide).inset(32)
+            $0.height.width.equalTo(view.safeAreaLayoutGuide)
             $0.center.equalToSuperview()
         }
+    }
+    
+    /// pull to refresh
+    private func reloadMainCellData() {
+        
+        var isEnd: Bool = false
+        
+        weatherCollectionView.rx.didEndDecelerating
+            .subscribe(onNext: {
+                print("스크롤 완전히 멈춤")
+                isEnd = true
+            })
+            .disposed(by: disposeBag)
+        
+        weatherCollectionView.rx.contentOffset
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] contentOffset in
+                guard let self = self else { return }
+                //let contentHeight = self.weatherCollectionView.contentSize.height
+                //let height = self.weatherCollectionView.frame.size.height
+                let yOffset = contentOffset.y
+                //print("yOffset : \(yOffset)")
+                //print("height : \(height)")
+                //print("contentHeight : \(contentHeight)")
+                // 바닥에 도달했는지 판단
+                if yOffset < -210  && isEnd {
+                    print("스크롤 동작")
+                    
+                    // 더미 데이터 넣기
+                    self.viewModel.applyDummyData()
+                    
+                    LocationManager.shared.coordinateSubject
+                        .subscribe(onNext: { coordinate in
+                            self.viewModel.input.accept(.changeCoordinate)
+                        }).disposed(by: self.disposeBag)
+                   
+                    
+                    self.weatherCollectionView.reloadData()
+                    
+                    print("데이터 갱신")
+                    
+                    isEnd = false
+                }
+            }).disposed(by: disposeBag)
     }
     
 }
@@ -239,9 +286,9 @@ extension MainViewController: UICollectionViewDataSource {
             
             guard let weather = viewModel.output.mainCellData.value else { return cell }
             guard let customForecast = self.viewModel.output.customForecastData.value else { return cell }
-                
-            cell.setText(weather: weather)
-            cell.setMinMaxTempForDay(temp: customForecast[indexPath.row].forecastList)
+            
+            cell.setText(weather: weather, tempUnit: self.viewModel.tempUnit.value)
+            cell.setMinMaxTempForDay(temp: customForecast[indexPath.row].forecastList, tempUnit: self.viewModel.tempUnit.value)
             
             // 여기서 주소도 전달
             cell.bindAddress(with: locationViewModel)
@@ -274,18 +321,10 @@ extension MainViewController: UICollectionViewDataSource {
         case .forecastList:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastListCell.identifier, for: indexPath) as? ForecastListCell else { return .init() }
             
-            //원래 코드
-//            guard let data = self.viewModel.output.forecastListCellData.value else { return cell }
-            //print("\n 받아온 데이터 \n \(self.viewModel.output.NOHUNforecastListCellData.value)")
             guard let data = self.viewModel.output.NOHUNforecastListCellData.value else { return cell }
             
-            if indexPath.row == 0 {
-                cell.setFirstCell(data: data.forecastList[indexPath.row],
-                                  icon: data.weatherIcons[indexPath.row])
-            } else {
                 cell.setCell(data: data.forecastList[indexPath.row],
-                             icon: data.weatherIcons[indexPath.row])
-            }
+                             icon: data.weatherIcons[indexPath.row], tempUnit: self.viewModel.tempUnit.value)
             
             return cell
         case .tenDayForecast:
@@ -296,7 +335,7 @@ extension MainViewController: UICollectionViewDataSource {
             
             cell.setCell(currentTemp: currentTemp,
                          data: customData[indexPath.row].forecastList,
-                         image: customData[indexPath.row].weatherIcons)
+                         image: customData[indexPath.row].weatherIcons, tempUnit: self.viewModel.tempUnit.value)
             
             if indexPath.row == 0 {
                 // 첫 번째 셀
@@ -347,6 +386,7 @@ extension MainViewController: UICollectionViewDataSource {
             subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 10, leading: 40, bottom: 10, trailing: 40)
         
         let decorationItem = NSCollectionLayoutDecorationItem.background(elementKind: "section-background-element-kind")
         
@@ -384,6 +424,7 @@ extension MainViewController: UICollectionViewDataSource {
         section.interGroupSpacing = -30
         section.decorationItems = [decorationItem]
         section.boundarySupplementaryItems = [header]
+        section.contentInsets = .init(top: 0, leading: 30, bottom: 0, trailing: 30)
         
         return section
     }
@@ -397,7 +438,7 @@ extension MainViewController: UICollectionViewDataSource {
         
         let group = NSCollectionLayoutGroup.vertical(
             layoutSize: .init(widthDimension: .fractionalWidth(1),
-                              heightDimension: .fractionalWidth(0.6)),
+                              heightDimension: .fractionalWidth(0.55)),
             subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)

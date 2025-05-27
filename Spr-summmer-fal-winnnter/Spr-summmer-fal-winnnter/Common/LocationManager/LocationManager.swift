@@ -22,10 +22,11 @@ final class LocationManager: NSObject {
     let errorSubject = PublishSubject<String>()
     
     // 좌표 전달 서브젝트
-    let coordinateSubject = PublishSubject<CLLocationCoordinate2D>()
+    //let coordinateSubject = PublishSubject<CLLocationCoordinate2D>()
+    let coordinateSubject = BehaviorSubject<CLLocationCoordinate2D?>(value: nil)
 
     
-    var locationViewModel = ViewModel()
+    var locationViewModel = LocationViewModel()
     
     
     private override init() {

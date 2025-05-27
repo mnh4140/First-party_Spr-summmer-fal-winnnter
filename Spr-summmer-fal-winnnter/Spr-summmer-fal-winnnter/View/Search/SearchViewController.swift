@@ -15,11 +15,21 @@ final class SearchViewController: UIViewController {
     let searchBar = UISearchBar()
     let tableView = UITableView()
     
-    var viewModel = ViewModel()
-    lazy var mainViewModel = MainViewModel(locationViewModel: viewModel)
+    private let viewModel: LocationViewModel
+    private let mainViewModel: MainViewModel
     
     let dataRelay = BehaviorRelay<[AddressData.Document.Address]>(value: [])
     var disposeBag = DisposeBag()
+    
+    init(viewModel: LocationViewModel, mainViewModel: MainViewModel) {
+        self.viewModel = viewModel
+        self.mainViewModel = mainViewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,32 +91,7 @@ final class SearchViewController: UIViewController {
         // 셀 선택 시 해당 모델 출력
         tableView.rx.modelSelected(AddressData.Document.Address.self)
             .subscribe(onNext: { selectedAddress in
-                guard let x = selectedAddress.x,
-                      let y = selectedAddress.y else { return }
-                
-                // 디버깅
-                print("선택된 위도: \(x), 경도: \(y)")
-                
-                // 위경도 값을 주소로 변경 작업
-                // -> ViewModel.regionCodeRelay 에서 주소값 방출
-                // -> 메인 셀 라벨에 주소 전달
-                self.viewModel.fetchRegionCode(longitude: x, latitude: y)
-                
-                // 현재 날씨 데이터를 가져오는 로직
-                // TODO: - ❌ 뷰모델 없이 바로 가져옴, inpu output 으로 변경해야됨
-                NetworkManager.shared.fetchCurrentWeatherData(lat: y, lon: x)
-                    .subscribe(onSuccess:  { [weak self] (weather, imageURL) in
-                        //print("불러온 날씨 데이터 : \n\(weather)")
-                        self?.mainViewModel.output.mainCellData.accept(weather)
-                    }, onFailure: { error in
-                        print(error)
-                    }).disposed(by: self.disposeBag)
-                
-                // 뷰모델에 위도 경도 값 주입
-                self.mainViewModel.latitude = "\(y)"
-                self.mainViewModel.longitude = "\(x)"
-                self.mainViewModel.input.accept(.changeCoordinate)
-                
+                self.mainViewModel.input.accept(.searchAddressData(selectedAddress))
                 self.navigationController?.popViewController(animated: true)
             }).disposed(by: disposeBag)
     }

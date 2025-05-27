@@ -87,24 +87,32 @@ class MainCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setText(weather: WeatherResponse) {
+    func setText(weather: WeatherResponse, tempUnit: Int) {
         //cityLabel.text = weather.name
-        tempLabel.text = "\(Int(weather.main.temp))°C"
+        let tempResult = tempUnit == 0 ? "°C" : "°F"
+        tempLabel.text = "\(Int(weather.main.temp))" + tempResult
         weatherLabel.text = weather.weather[0].main
 //        minTempLabel.text = "\(Int(weather.main.tempMin))°C"
 //        maxTempLabel.text = "\(Int(weather.main.tempMax))°C"
     }
     
-    func setMinMaxTempForDay(temp: CustomForecastList) {
-        minTempLabel.text = "\(Int(temp.tempMin))°C"
-        maxTempLabel.text = "\(Int(temp.tempMax))°C"
+    func setMinMaxTempForDay(temp: CustomForecastList, tempUnit: Int) {
+        let tempResult = tempUnit == 0 ? "°C" : "°F"
+        minTempLabel.text = "\(Int(temp.tempMin))" + tempResult
+        maxTempLabel.text = "\(Int(temp.tempMax))" + tempResult
     }
     
     /// [위치] 주소 정보 바인딩
-    func bindAddress(with viewModel: ViewModel) {
+    func bindAddress(with viewModel: LocationViewModel) {
         viewModel.regionCodeRelay
             .asDriver(onErrorJustReturn: [])
-            .map { $0.first?.addressName ?? "주소 없음" }
+            //.map { $0.first?.addressName ?? "주소 없음" }
+            .map {
+                guard let region2DepthName = $0.first?.region2DepthName else { return "주소 없음" }
+                guard let region3DepthName = $0.first?.region3DepthName else { return "주소 없음" }
+                
+                return region2DepthName + " " + region3DepthName
+            }
             .drive(cityLabel.rx.text)
             .disposed(by: disposeBag)
     }
