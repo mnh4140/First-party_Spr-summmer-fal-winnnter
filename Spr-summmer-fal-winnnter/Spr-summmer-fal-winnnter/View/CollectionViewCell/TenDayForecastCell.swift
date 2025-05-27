@@ -90,6 +90,8 @@ class TenDayForecastCell: UICollectionViewCell {
         minTempLabel.text = "\(Int(data.tempMin))" + tempResult
         maxTempLabel.text = "\(Int(data.tempMax))" + tempResult
         progressBar.update(currentTemp: currentTemp, minTemp: data.tempMin, maxTemp: data.tempMax)
+        
+        separatorView.isHidden = false
     }
     
     func setToday() {
