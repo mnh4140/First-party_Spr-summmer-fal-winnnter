@@ -17,32 +17,39 @@ final class ClothesViewModel {
     
     
     // 외부에서 호출
-    func update(temp: Double, condition: String) {
-        let normalized = condition.lowercased()
-        let result = recommendClothes(temp: temp, condition: normalized)
-        let text = generateMessage(temp: temp, condition: normalized)
+    func update(temp: Double, condition: String, tempUnit: Int) {
+        let normalizedTemp = tempUnit == 0 ? temp : fahrenheitToCelsius(temp)
+        let normalizedCondition = condition.lowercased()
+        let result = recommendClothes(temp: normalizedTemp, condition: normalizedCondition)
+        let text = generateMessage(displayTemp: temp, tempForLogic: normalizedTemp, condition: normalizedCondition, tempUnit: tempUnit)
         recommendation.accept(result)
         message.accept(text)
     }
     
-    private func generateMessage(temp: Double, condition: String) -> String {
+    private func fahrenheitToCelsius(_ f: Double) -> Double {
+        return (f - 32) * 5 / 9
+    }
+
+    private func generateMessage(displayTemp: Double, tempForLogic: Double, condition: String, tempUnit: Int) -> String {
+        let unitLabel = tempUnit == 0 ? "섭씨" : "화씨"
+        let prefix = "\(unitLabel) \(Int(displayTemp))도입니다! "
             switch condition {
             case "rain":
-                return "\(Int(temp))도입니다! 우산 챙기고 방수 옷을 입으세요 ☔️"
+                return prefix + "우산 챙기고 방수 옷을 입으세요 ☔️"
             case "snow":
-                return "\(Int(temp))도입니다! 눈 오는 날엔 따뜻하게 입으세요 ❄️"
+                return prefix + "눈 오는 날엔 따뜻하게 입으세요 ❄️"
             default:
-                switch temp {
+                switch tempForLogic {
                 case ..<5:
-                    return "\(Int(temp))도입니다! 매우 추우니 패딩은 필수예요 🥶"
+                    return prefix + "매우 추우니 패딩은 필수예요 🥶"
                 case 5..<15:
-                    return "\(Int(temp))도입니다! 쌀쌀하니 겉옷을 챙기세요 🧥"
+                    return prefix + "쌀쌀하니 겉옷을 챙기세요🧥"
                 case 15..<22:
-                    return "\(Int(temp))도입니다! 선선한 날씨예요 👌"
+                    return prefix + "선선한 날씨예요 👌"
                 case 22..<28:
-                    return "\(Int(temp))도입니다! 가볍게 입기 좋아요 ☀️"
+                    return prefix + "가볍게 입기 좋아요 ☀️"
                 default:
-                    return "\(Int(temp))도입니다! 더우니 시원하게 입으세요 🔥"
+                    return prefix + "더우니 시원하게 입으세요 🔥"
                 }
             }
         }
