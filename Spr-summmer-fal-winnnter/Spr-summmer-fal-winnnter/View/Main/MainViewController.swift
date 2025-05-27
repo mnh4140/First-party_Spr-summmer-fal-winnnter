@@ -247,9 +247,10 @@ extension MainViewController: UICollectionViewDataSource {
                 if let weather = viewModel.output.mainCellData.value {
                     let temp = weather.main.temp
                     let condition = weather.weather.first?.main ?? "Clear"
+                    let unit = viewModel.tempUnit.value
 
                     // ViewModel 업데이트
-                    clothesViewModel.update(temp: temp, condition: condition)
+                    clothesViewModel.update(temp: temp, condition: condition, tempUnit: unit)
                 }
 
             // ViewModel에서 추천 옷 정보 가져와 셀에 적용
