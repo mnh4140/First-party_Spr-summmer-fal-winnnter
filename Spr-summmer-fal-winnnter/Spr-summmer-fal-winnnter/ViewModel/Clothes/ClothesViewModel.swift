@@ -21,7 +21,6 @@ final class ClothesViewModel {
         let normalized = condition.lowercased()
         let result = recommendClothes(temp: temp, condition: normalized)
         let text = generateMessage(temp: temp, condition: normalized)
-        print("🌡️ temp: \(temp), ☁️ condition: \(normalized) → 👕 \(result.topImageName), 👖 \(result.bottomImageName)")
         recommendation.accept(result)
         message.accept(text)
     }

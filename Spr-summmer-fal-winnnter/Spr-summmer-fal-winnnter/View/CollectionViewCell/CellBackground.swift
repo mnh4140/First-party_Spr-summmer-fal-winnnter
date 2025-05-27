@@ -13,7 +13,6 @@ class CellBackground: UICollectionReusableView {
     
     private let backgroundView: UIView = {
         let view = UIView()
-        //view.backgroundColor = .lightGray.withAlphaComponent(1/2)
         view.backgroundColor = UIColor(red: 121/255, green: 197/255, blue: 202/255, alpha: 1.0)
         view.layer.cornerRadius = 20
         
@@ -31,12 +30,10 @@ class CellBackground: UICollectionReusableView {
     }
     
     private func setupUI() {
-//        self.backgroundColor = .clear
         self.backgroundColor = UIColor(red: 140/255, green: 216/255, blue: 219/255, alpha: 1.0)
         self.addSubview(backgroundView)
         
         backgroundView.snp.makeConstraints {
-//            $0.width.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.top.bottom.equalToSuperview().inset(10)
             $0.center.equalToSuperview()

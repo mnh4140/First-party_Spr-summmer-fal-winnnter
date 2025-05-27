@@ -14,25 +14,28 @@ import Alamofire
 
 class MainViewModel {
     
+    // View -> MainViewModel
     enum Input {
-        case settingButtonTap
-        case searchButtonTap
-        case changeCoordinate
-        case searchAddressData(AddressData.Document.Address)
-        case setUnitButtonTap(Int)
+        case settingButtonTap // 설정 버튼 탭 감지
+        case searchButtonTap // 검색 버튼 탭 감지
+        case changeCoordinate // 사용자 위치 변경 감지
+        case searchAddressData(AddressData.Document.Address) // 검색어 감지
+        case setUnitButtonTap(Int) // 섭씨 화씨 변환 감지
     }
     
+    // MainViewModel -> View
     struct Output {
-        let showSettingMenu = PublishRelay<Void>()
-        let showSearchView = PublishRelay<Void>()
+        // 화면 전달
+        let showSettingMenu = PublishRelay<Void>() // 설정 화면 띄움
+        let showSearchView = PublishRelay<Void>() // 검색 화면 띄움
         
-        let mainCellData = BehaviorRelay<WeatherResponse?>(value: nil)
-
-        let tenDayForecastCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
+        // 셀 데이터 전달
+        let mainCellData = BehaviorRelay<WeatherResponse?>(value: nil) // 메인 셀 데이터 전달
         let customForecastData = BehaviorRelay<[CustomForecastData]?>(value: nil)
 
+        // TODO: - 이름 변경하기
+        //let forecastListCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
         let forecastListCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
-        let NOHUNforecastListCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
     }
     
     struct tenDayForecastData {
@@ -93,7 +96,6 @@ class MainViewModel {
                     // 현재 날씨 데이터를 가져오는 로직
                     NetworkManager.shared.fetchCurrentWeatherData(lat: y, lon: x, tempUnit: tempUnit.value)
                         .subscribe(onSuccess:  { [weak self] (weather, imageURL) in
-                            //print("불러온 날씨 데이터 : \n\(weather)")
                             self?.output.mainCellData.accept(weather)
                         }, onFailure: { error in
                             print(error)
@@ -102,12 +104,9 @@ class MainViewModel {
                     // 뷰모델에 위도 경도 값 주입
                     self.latitude.accept(y)
                     self.longitude.accept(x)
-                    print("위도 경도 \(self.latitude.value), \(self.longitude.value)")
                     self.input.accept(.changeCoordinate)
                 case .setUnitButtonTap(let unit):
                     self.tempUnit.accept(unit)
-                    print(unit)
-                    print(latitude.value, longitude.value)
                     self.loadWeatherResponseData()
                     self.loadForecastListData()
                     
@@ -262,7 +261,7 @@ class MainViewModel {
                 if image.count >= 2 { image.removeFirst(2) }
 
                 let result = tenDayForecastData(forecastList: list, weatherIcons: image)
-                self.output.NOHUNforecastListCellData.accept(result)
+                self.output.forecastListCellData.accept(result)
 
             }, onFailure: { error in
                 print("loadForecastListData forecast 로딩 실패: \(error)")
@@ -276,22 +275,11 @@ class MainViewModel {
                 guard let self else { return }
                 
                 self.output.mainCellData.accept(weather)
-                print("날씨 API 호출: lat=\(latitude), lon=\(longitude)")
                 
             } onFailure: { error in
                 print(error)
             }.disposed(by: disposeBag)
     }
-    
-//    private func NOHUNloadWeatherResponseData() {
-//        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
-//            .subscribe { [weak self] (weather, imageURL) in
-//                guard let self else { return }
-//                self.output.mainCellData.accept(weather)
-//            } onFailure: { error in
-//                print(error)
-//            }.disposed(by: disposeBag)
-//    }
     
     // 세팅 버튼을 클릭하면 세팅 뷰를 띄워주는 메서드
     func showSettingMenu(on vc: UIViewController) {
@@ -310,7 +298,6 @@ class MainViewModel {
         menuNavVC.menuWidth = UIScreen.main.bounds.width * 0.7
         menuNavVC.presentationStyle = .menuSlideIn
         SideMenuManager.default.leftMenuNavigationController = menuNavVC
-//           SideMenuManager.default.leftMenuNavigationController?.setNavigationBarHidden(true, animated: true)
     }
 }
 
@@ -349,7 +336,7 @@ extension MainViewModel {
             forecastList: dummyForecastList,
             weatherIcons: iconList
         )
-        output.NOHUNforecastListCellData.accept(forecastData)
+        output.forecastListCellData.accept(forecastData)
 
         // 3. CustomForecastList 더미 5일치
         let dummyCustomForecast: [CustomForecastData] = (1...5).map { day in
