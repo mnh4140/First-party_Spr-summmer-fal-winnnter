@@ -212,44 +212,24 @@ extension MainViewController {
     /// pull to refresh
     private func reloadMainCellData() {
         
-        var isEnd: Bool = false
-        
-        weatherCollectionView.rx.didEndDecelerating
-            .subscribe(onNext: {
-                print("스크롤 완전히 멈춤")
-                isEnd = true
-            })
-            .disposed(by: disposeBag)
-        
-        weatherCollectionView.rx.contentOffset
+        weatherCollectionView.rx.didEndDragging
+            .filter { $0 } // 사용자가 손을 뗐을 때만
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] contentOffset in
-                guard let self = self else { return }
-                //let contentHeight = self.weatherCollectionView.contentSize.height
-                //let height = self.weatherCollectionView.frame.size.height
-                let yOffset = contentOffset.y
-                //print("yOffset : \(yOffset)")
-                //print("height : \(height)")
-                //print("contentHeight : \(contentHeight)")
-                // 바닥에 도달했는지 판단
-                if yOffset < -210  && isEnd {
-                    print("스크롤 동작")
-                    
-                    // 더미 데이터 넣기
-                    self.viewModel.applyDummyData()
-                    
-                    LocationManager.shared.coordinateSubject
-                        .subscribe(onNext: { coordinate in
-                            self.viewModel.input.accept(.changeCoordinate)
-                        }).disposed(by: self.disposeBag)
-                   
-                    
-                    self.weatherCollectionView.reloadData()
-                    
-                    print("데이터 갱신")
-                    
-                    isEnd = false
-                }
+            .map { [weak self] _ in
+                guard let self else { return 0 }
+                return self.weatherCollectionView.contentOffset.y
+            }
+            .filter { yOffset in
+                yOffset < -210 // 위로 잡아 당긴 높이
+            }
+            .subscribe(onNext: { [weak self] _ in
+                guard let self else { return }
+                
+                print("당겨짐 감지")
+
+                self.viewModel.applyDummyData() // 더미 데이터 및 날씨 요청
+                self.viewModel.input.accept(.changeCoordinate) // 위지 정보 요청
+                self.weatherCollectionView.reloadData() // 데이터 UI에 리로드
             }).disposed(by: disposeBag)
     }
     
