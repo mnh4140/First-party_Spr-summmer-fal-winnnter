@@ -16,7 +16,10 @@ class ClothesCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 15, weight: .medium)
         label.textColor = .white
         label.textAlignment = .center
-        label.numberOfLines = 0
+        label.numberOfLines = 1
+        label.lineBreakMode = .byClipping               // 줄임표 없이 잘라내지 않음
+        label.adjustsFontSizeToFitWidth = true          // 필요 시 글자 크기 줄임
+        label.minimumScaleFactor = 0.7                  // 최소 70%까지 줄이기 허용
         return label
     }()
     
