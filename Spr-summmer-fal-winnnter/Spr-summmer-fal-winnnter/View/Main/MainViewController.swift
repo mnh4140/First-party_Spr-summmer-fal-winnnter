@@ -39,6 +39,9 @@ class MainViewController: UIViewController {
         
         return collectionView
     }()
+    
+    private let clothesViewModel = ClothesViewModel()
+
 }
 
 // MARK: - Lifecycle
@@ -51,7 +54,15 @@ extension MainViewController {
         inputBind()
         //bindLocationManager()
         LocationManager.shared.requestLocation()
-        //cellSelect()
+        
+        //출력 확인용
+        //clothesViewModel.update(temp: 4.0, condition: "Clear")     // very cold
+        //clothesViewModel.update(temp: 12.0, condition: "Clear")    // cool
+        //clothesViewModel.update(temp: 20.0, condition: "Clear")    // mild
+        //clothesViewModel.update(temp: 26.0, condition: "Clear")    // warm
+        //clothesViewModel.update(temp: 31.0, condition: "Clear")    // hot
+        //clothesViewModel.update(temp: 18.0, condition: "Rain")     // rain
+        //clothesViewModel.update(temp: -2.0, condition: "Snow")     // snow
         reloadMainCellData()
     }
 }
@@ -283,12 +294,30 @@ extension MainViewController: UICollectionViewDataSource {
             cell.bindAddress(with: locationViewModel)
             
             return cell
+            
         case .clothes:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ClothesCell.identifier, for: indexPath) as? ClothesCell else { return .init() }
             
-            cell.test()
+            //cell.test()
+            
+            // 날씨 데이터 가져오기
+                if let weather = viewModel.output.mainCellData.value {
+                    let temp = weather.main.temp
+                    let condition = weather.weather.first?.main ?? "Clear"
+
+                    // ViewModel 업데이트
+                    clothesViewModel.update(temp: temp, condition: condition)
+                }
+
+            // ViewModel에서 추천 옷 정보 가져와 셀에 적용
+            if let recommendation = clothesViewModel.recommendation.value {
+                let message = clothesViewModel.message.value
+                cell.configure(with: recommendation, message: message)
+            }
+
             
             return cell
+            
         case .forecastList:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastListCell.identifier, for: indexPath) as? ForecastListCell else { return .init() }
             
