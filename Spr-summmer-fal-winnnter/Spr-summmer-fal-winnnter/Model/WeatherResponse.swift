@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - WeatherResponse
-struct WeatherResponse: Codable {
+struct WeatherResponse: Codable, Hashable {
     let coord: Coord // 위도, 경도
     let weather: [Weather] // 날씨 정보
     let base: String // 날씨 데이터의 기준
@@ -24,17 +24,17 @@ struct WeatherResponse: Codable {
 }
 
 // MARK: - Clouds
-struct Clouds: Codable {
+struct Clouds: Codable, Hashable {
     let all: Int // 구름 양 (%) - 하늘의 n%가 구름으로 덮여 있음
 }
 
 // MARK: - Coord
-struct Coord: Codable {
+struct Coord: Codable, Hashable {
     let lon, lat: Double // 위도, 경도
 }
 
 // MARK: - Main
-struct Main: Codable { // 날씨 상태 배열
+struct Main: Codable, Hashable { // 날씨 상태 배열
     let temp, feelsLike, tempMin, tempMax: Double
     let pressure, humidity, seaLevel, grndLevel: Int
 
@@ -50,13 +50,13 @@ struct Main: Codable { // 날씨 상태 배열
 }
 
 // MARK: - Sys
-struct Sys: Codable {
+struct Sys: Codable, Hashable {
     let country: String // 국가 코드
     let sunrise, sunset: Int // 일출초 일몰 시간
 }
 
 // MARK: - Weather
-struct Weather: Codable {
+struct Weather: Codable, Hashable {
     let id: Int // 날씨 상태 코드
     let main: String // 날씨 상태 (예: 구름, 비, 맑음 등)
     let description: String // 날씨 상세 설명
@@ -64,7 +64,7 @@ struct Weather: Codable {
 }
 
 // MARK: - Wind
-struct Wind: Codable {
+struct Wind: Codable, Hashable {
     let speed: Double // 바람 속도 (m/s)
     let deg: Int // 풍향
     let gust: Double? // 돌풍 풍속 (m/s)

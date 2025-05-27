@@ -78,7 +78,7 @@ class ForecastListCell: UICollectionViewCell {
         
         timeLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(4)
+            $0.bottom.equalTo(contentView.snp.centerY)//.offset(-2)
         }
         
         weatherIcon.snp.makeConstraints {
@@ -87,7 +87,7 @@ class ForecastListCell: UICollectionViewCell {
         
         stackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(4)
+            $0.top.equalTo(contentView.snp.centerY)//.offset(2)
         }
     }
 }

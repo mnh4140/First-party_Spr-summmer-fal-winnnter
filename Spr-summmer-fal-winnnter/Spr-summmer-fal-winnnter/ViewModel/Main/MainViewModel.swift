@@ -14,6 +14,17 @@ import Alamofire
 
 class MainViewModel {
     
+    enum Section: Hashable {
+        case main, clothes, forecastList, tenDayForecast
+    }
+    
+    enum Item: Hashable {
+        case mainCell(MainCellData?)
+        case clothesCell
+        case forecastCell(tenDayForecastDataForDiffableDS?)
+        case tenDayForecastCell(CustomForecastData?)
+    }
+    
     enum Input {
         case settingButtonTap
         case searchButtonTap
@@ -26,7 +37,8 @@ class MainViewModel {
         let showSettingMenu = PublishRelay<Void>()
         let showSearchView = PublishRelay<Void>()
         
-        let mainCellData = BehaviorRelay<WeatherResponse?>(value: nil)
+        let mainCellData = BehaviorRelay<MainCellData?>(value: nil)
+        let snapshotRelay = BehaviorRelay<NSDiffableDataSourceSnapshot<Section, Item>?>(value: nil)
 
         let tenDayForecastCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
         let customForecastData = BehaviorRelay<[CustomForecastData]?>(value: nil)
@@ -35,12 +47,24 @@ class MainViewModel {
         let NOHUNforecastListCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
     }
     
-    struct tenDayForecastData {
+    struct MainCellData: Hashable {
+        let weatherResponse: WeatherResponse
+        let customForecastData: CustomForecastList
+    }
+    
+    struct tenDayForecastData: Hashable {
         let forecastList: [ForecastList]
         let weatherIcons: [UIImage]
     }
     
-    struct CustomForecastData {
+    struct tenDayForecastDataForDiffableDS: Hashable {
+        let forecastList: ForecastList
+        let weatherIcons: UIImage
+    }
+    
+    private var ForecastDatas: [tenDayForecastDataForDiffableDS] = []
+    
+    struct CustomForecastData: Hashable {
         let forecastList: CustomForecastList
         let weatherIcons: UIImage
     }
@@ -63,7 +87,8 @@ class MainViewModel {
         applyDummyData() // 더미데이터 생성 메소드
         transform()
         setUpSideMenuNavigationVC()
-        loadWeatherResponseData()
+//        loadWeatherResponseData()
+        updateSnapshot()
     }
     
     // 들어온 Input을 Output으로 변환하는 메서드
@@ -84,35 +109,65 @@ class MainViewModel {
                     output.showSearchView.accept(())
                 case .changeCoordinate:
                     self.locationViewModel.fetchRegionCode(longitude: longitude.value, latitude: latitude.value)
-                    self.loadWeatherResponseData()
+//                    self.loadWeatherResponseData()
                     self.loadForecastListData()
                 case .searchAddressData(let selectedAddress):
                     guard let x = selectedAddress.x,
                           let y = selectedAddress.y else { return }
                     self.locationViewModel.fetchRegionCode(longitude: x, latitude: y)
-                    // 현재 날씨 데이터를 가져오는 로직
-                    NetworkManager.shared.fetchCurrentWeatherData(lat: y, lon: x, tempUnit: tempUnit.value)
-                        .subscribe(onSuccess:  { [weak self] (weather, imageURL) in
-                            //print("불러온 날씨 데이터 : \n\(weather)")
-                            self?.output.mainCellData.accept(weather)
-                        }, onFailure: { error in
-                            print(error)
-                        }).disposed(by: self.disposeBag)
                     
                     // 뷰모델에 위도 경도 값 주입
                     self.latitude.accept(y)
                     self.longitude.accept(x)
+                    
+                    // 현재 날씨 데이터를 가져오는 로직
+//                    self.loadWeatherResponseData()
                     print("위도 경도 \(self.latitude.value), \(self.longitude.value)")
                     self.input.accept(.changeCoordinate)
                 case .setUnitButtonTap(let unit):
                     self.tempUnit.accept(unit)
                     print(unit)
                     print(latitude.value, longitude.value)
-                    self.loadWeatherResponseData()
+//                    self.loadWeatherResponseData()
                     self.loadForecastListData()
                     
                 }
             }).disposed(by: disposeBag)
+    }
+    
+    func updateSnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        var mainItem = [Item]()
+        var clothesItem = [Item]()
+        var forecastItem = [Item]()
+        var tenDayForecastItem = [Item]()
+        
+        mainItem.append(.mainCell(self.output.mainCellData.value))
+        
+        snapshot.appendSections([.main])
+        snapshot.appendItems(mainItem)
+        
+        clothesItem.append(.clothesCell)
+        
+        snapshot.appendSections([.clothes])
+        snapshot.appendItems(clothesItem)
+        
+        self.ForecastDatas.forEach {
+            forecastItem.append(.forecastCell($0))
+        }
+        
+        snapshot.appendSections([.forecastList])
+        snapshot.appendItems(forecastItem)
+        
+        guard let tenDay = self.output.customForecastData.value else { return }
+        for (_, i) in tenDay.enumerated() {
+            tenDayForecastItem.append(.tenDayForecastCell(i))
+        }
+        
+        snapshot.appendSections([.tenDayForecast])
+        snapshot.appendItems(tenDayForecastItem)
+        
+        output.snapshotRelay.accept(snapshot)
     }
     
     // ForecastList의 데이터를 CustomForecastList로 변환하는 메서드
@@ -213,6 +268,11 @@ class MainViewModel {
             self.fetchCustomForecastListIcon(data: $0)
         }
         
+        // MainCellData 생성
+        self.fetchCustomForecastWithWeatherResponse() { weather in
+            self.output.mainCellData.accept(MainCellData(weatherResponse: weather, customForecastData: customForecastList[0]))
+        }
+        
     }
     
     // CustomForecastList의 데이터 중 Icon을 받아오는 메서드
@@ -239,6 +299,17 @@ class MainViewModel {
 
     }
     
+    private func fetchCustomForecastWithWeatherResponse(completion: @escaping (WeatherResponse) -> ()) {
+        
+            NetworkManager.shared.fetchCurrentWeatherData(lat: latitude.value, lon: longitude.value, tempUnit: tempUnit.value)
+                .subscribe { weather, imageData in
+                    
+                    completion(weather)
+                    
+                }.disposed(by: disposeBag)
+        
+    }
+    
     // WeatherResponse 모델의 정보를 받아오는 메서드 loadForecastListData
     private func loadForecastListData() {
         NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude.value, lon: longitude.value, tempUnit: tempUnit.value)
@@ -260,6 +331,10 @@ class MainViewModel {
 
                 if list.count >= 2 { list.removeFirst(2) }
                 if image.count >= 2 { image.removeFirst(2) }
+                
+                for (listElement, imageElement) in zip(list, image) {
+                    self.ForecastDatas.append(tenDayForecastDataForDiffableDS(forecastList: listElement, weatherIcons: imageElement))
+                }
 
                 let result = tenDayForecastData(forecastList: list, weatherIcons: image)
                 self.output.NOHUNforecastListCellData.accept(result)
@@ -270,15 +345,15 @@ class MainViewModel {
             .disposed(by: disposeBag)
     }
     
-    private func loadWeatherResponseData() {
-        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude.value, lon: longitude.value, tempUnit: tempUnit.value)
-            .subscribe { [weak self] (weather, imageURL) in
-                guard let self else { return }
-                self.output.mainCellData.accept(weather)
-            } onFailure: { error in
-                print(error)
-            }.disposed(by: disposeBag)
-    }
+//    private func loadWeatherResponseData() {
+//        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude.value, lon: longitude.value, tempUnit: tempUnit.value)
+//            .subscribe { [weak self] (weather, imageURL) in
+//                guard let self else { return }
+//                self.output.mainCellData.accept(weather)
+//            } onFailure: { error in
+//                print(error)
+//            }.disposed(by: disposeBag)
+//    }
     
 //    private func NOHUNloadWeatherResponseData() {
 //        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
@@ -334,7 +409,6 @@ extension MainViewModel {
             name: "서울",
             cod: 200
         )
-        output.mainCellData.accept(dummyWeather)
 
         // 2. ForecastList 더미 6개 (3시간 간격 예보)
         let dummyForecastList: [ForecastList] = (0..<10).map { createDummyForecastList(index: $0) }
@@ -362,7 +436,7 @@ extension MainViewModel {
                 weatherIcons: dummyIcon
             )
         }
-
+        output.mainCellData.accept(MainCellData(weatherResponse: dummyWeather, customForecastData: dummyCustomForecast[0].forecastList))
         output.customForecastData.accept(dummyCustomForecast)
     }
 

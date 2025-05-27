@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CustomForecastList {
+struct CustomForecastList: Hashable {
     let day: String
     let tempMin: Double
     let tempMax: Double
