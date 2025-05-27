@@ -10,6 +10,7 @@ import RxSwift
 import RxRelay
 
 class ViewModel {
+class LocationViewModel {
     var disposeBag = DisposeBag()
     let fetchAddressRelay = PublishRelay<[AddressData.Document]>() // 주소 -> 위도 경도 가져오기
     
