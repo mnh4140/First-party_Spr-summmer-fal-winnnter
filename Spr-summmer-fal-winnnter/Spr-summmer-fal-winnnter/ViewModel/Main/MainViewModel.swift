@@ -56,9 +56,9 @@ class MainViewModel {
     let latitude = BehaviorRelay<String>(value: "37.56")
     let longitude = BehaviorRelay<String>(value: "127.4")
     
-    let locationViewModel: ViewModel
+    let locationViewModel: LocationViewModel
     
-    init(locationViewModel: ViewModel ) {
+    init(locationViewModel: LocationViewModel ) {
         self.locationViewModel = locationViewModel
         applyDummyData() // 더미데이터 생성 메소드
         transform()
