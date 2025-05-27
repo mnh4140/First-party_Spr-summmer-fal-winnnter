@@ -196,9 +196,11 @@ extension MainViewController {
         
         self.navigationItem.rightBarButtonItem = searchButton
         
-        self.navigationController?.navigationBar.barTintColor = UIColor(red: 154/255, green: 203/255, blue: 208/255, alpha: 1.0)
+        //self.navigationController?.navigationBar.barTintColor = UIColor(red: 154/255, green: 203/255, blue: 208/255, alpha: 1.0)
+        self.navigationController?.navigationBar.barTintColor = UIColor(red: 140/255, green: 216/255, blue: 219/255, alpha: 1.0)
         
-        view.backgroundColor = UIColor(red: 154/255, green: 203/255, blue: 208/255, alpha: 1.0)
+        view.backgroundColor = UIColor(red: 140/255, green: 216/255, blue: 219/255, alpha: 1.0)
+//        view.backgroundColor = UIColor(red: 154/255, green: 203/255, blue: 208/255, alpha: 1.0)
         view.addSubview(weatherCollectionView)
         
         weatherCollectionView.snp.makeConstraints {
