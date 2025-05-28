@@ -41,7 +41,7 @@
 - IDE : Xcode
 - 버전 : iOS 16
 - Architecture : MVVM
-- 라이브러리 : RxSwift, SnapKit, Alamofire, CoreLocation
+- 라이브러리 : RxSwift, SnapKit, Alamofire, CoreLocation, SideMenu
 - UI 구현 : UIKit
 - UI 디자인 : Figma
 - 디자인 패턴 : Observer 패턴, Singleton 패턴, Delegate 패턴
