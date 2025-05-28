@@ -191,6 +191,7 @@ extension MainViewController {
                 guard let self else { return }
 
                 self.viewModel.applyDummyData() // 더미 데이터 및 날씨 요청
+                LocationManager.shared.requestLocation()
                 self.viewModel.input.accept(.changeCoordinate) // 위지 정보 요청
                 self.weatherCollectionView.reloadData() // 데이터 UI에 리로드
             }).disposed(by: disposeBag)
@@ -244,14 +245,23 @@ extension MainViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ClothesCell.identifier, for: indexPath) as? ClothesCell else { return .init() }
             
             // 날씨 데이터 가져오기
-                if let weather = viewModel.output.mainCellData.value {
-                    let temp = weather.main.temp
-                    let condition = weather.weather.first?.main ?? "Clear"
-                    let unit = viewModel.tempUnit.value
-
-                    // ViewModel 업데이트
-                    clothesViewModel.update(temp: temp, condition: condition, tempUnit: unit)
-                }
+            if let weather = viewModel.output.mainCellData.value {
+                let temp = weather.main.temp
+                let condition = weather.weather.first?.main ?? "Clear"
+                let unit = viewModel.tempUnit.value
+                
+                // ViewModel 업데이트
+                clothesViewModel.update(temp: temp, condition: condition, tempUnit: unit)
+            }
+            
+            //출력 확인용
+            //clothesViewModel.update(temp: 4.0, condition: "Clear")     // very cold
+            //clothesViewModel.update(temp: 12.0, condition: "Clear")    // cool
+            //clothesViewModel.update(temp: 20.0, condition: "Clear")    // mild
+            //clothesViewModel.update(temp: 26.0, condition: "Clear")    // warm
+            //clothesViewModel.update(temp: 31.0, condition: "Clear", tempUnit: viewModel.tempUnit.value)    // hot
+            //clothesViewModel.update(temp: 18.0, condition: "Rain", tempUnit: viewModel.tempUnit.value)     // rain
+            //clothesViewModel.update(temp: -2.0, condition: "Snow", tempUnit: viewModel.tempUnit.value)     // snow
 
             // ViewModel에서 추천 옷 정보 가져와 셀에 적용
             if let recommendation = clothesViewModel.recommendation.value {
