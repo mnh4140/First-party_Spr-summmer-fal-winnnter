@@ -121,48 +121,35 @@ class MainViewModel {
         var result = [[ForecastList]]() // 데이터를 하루 단위의 배열로 가지게 될 변수
         
         // 첫 데이터의 시간 체크
-        var firstHour = String(list[0].dtTxt.components(separatedBy: " ")[1].prefix(2))
-        
-        // ForecastList는 6시간 전의 데이터부터 불러옴
-        // 그래서 만약 이전 시간이 어제일 경우 데이터 삭제
-        switch firstHour {
-        case "18":
-            list.removeFirst()
-            fallthrough
-        case "21":
-            list.removeFirst()
-        default:
-            break
-        }
-        
-        // 첫 데이터 시간 체크 갱신
-        firstHour = String(list[0].dtTxt.components(separatedBy: " ")[1].prefix(2))
+        guard var firstHour = Int(list[0].dtTxt.components(separatedBy: " ")[1].prefix(2)) else { return }
+        firstHour += 9
         
         // 첫 날(오늘) 데이터를 box에 담음
         switch firstHour {
-        case "00":
+        case 09:
             box.append(list.removeFirst())
             fallthrough
-        case "03":
+        case 12:
             box.append(list.removeFirst())
             fallthrough
-        case "06":
+        case 15:
             box.append(list.removeFirst())
             fallthrough
-        case "09":
+        case 18:
             box.append(list.removeFirst())
             fallthrough
-        case "12":
+        case 21:
             box.append(list.removeFirst())
             fallthrough
-        case "15":
+        case 24:
             box.append(list.removeFirst())
             fallthrough
-        case "18":
+        case 27:
             box.append(list.removeFirst())
             fallthrough
-        case "21":
+        case 30:
             box.append(list.removeFirst())
+            fallthrough
         default:
             break
         }
@@ -191,7 +178,7 @@ class MainViewModel {
         
         // result -> customForecastList 변환 작업
         result.forEach {
-            let day = String($0[0].dtTxt.split(separator: " ")[0].suffix(2))
+            let day = String($0.last?.dtTxt.split(separator: " ")[0].suffix(2) ?? "")
             let tempMin = $0.sorted(by: { $0.main.tempMin < $1.main.tempMin })[0].main.tempMin
             let tempMax = $0.sorted(by: { $0.main.tempMax > $1.main.tempMax })[0].main.tempMin
             let pop = $0.sorted(by: { $0.pop > $1.pop })[0].pop
@@ -254,11 +241,8 @@ class MainViewModel {
                 
                 self.transformForecastListData(data: weather.list)
 
-                var list = [ForecastList](weather.list.prefix(12))
-                image = [UIImage](image.prefix(12))
-
-                if list.count >= 2 { list.removeFirst(2) }
-                if image.count >= 2 { image.removeFirst(2) }
+                let list = [ForecastList](weather.list.prefix(10))
+                image = [UIImage](image.prefix(10))
 
                 let result = tenDayForecastData(forecastList: list, weatherIcons: image)
                 self.output.forecastListCellData.accept(result)
