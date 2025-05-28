@@ -114,6 +114,24 @@ class MainViewModel {
             }).disposed(by: disposeBag)
     }
     
+    // yyyy-MM-dd HH:mm:ss가 기본, a는 AM/PM
+    // hh(소문자)는 12시간 단위, h는 한 자리만 표시
+    // ForecastList.dt의 Unix Timestamp 값을 format으로 넣어준 형태의 String으로 변환하는 메서드
+    private func unixTimeStampToString(unixTimeStamp: Int, format: String) -> String {
+        
+        // dt에 저장된 Unix timestamp를 Date타입으로 변환
+        let customDate = Date(timeIntervalSince1970: Double(unixTimeStamp))
+        
+        // DateFormatter 생성
+        let customDateFormatter = DateFormatter()
+        // DateFormatter의 포맷을 "시간+AM or PM"으로 설정
+        customDateFormatter.dateFormat = format
+        // DateFormat 실행
+        let hour = customDateFormatter.string(from: customDate)
+        
+        return hour
+    }
+    
     // ForecastList의 데이터를 CustomForecastList로 변환하는 메서드
     private func transformForecastListData(data: [ForecastList]) {
         var list = data                 // removeFirst 메서드를 사용하기 위해 변수 생성
@@ -121,33 +139,32 @@ class MainViewModel {
         var result = [[ForecastList]]() // 데이터를 하루 단위의 배열로 가지게 될 변수
         
         // 첫 데이터의 시간 체크
-        guard var firstHour = Int(list[0].dtTxt.components(separatedBy: " ")[1].prefix(2)) else { return }
-        firstHour += 9
+        let firstHour = self.unixTimeStampToString(unixTimeStamp: list[0].dt, format: "ha")
         
         // 첫 날(오늘) 데이터를 box에 담음
         switch firstHour {
-        case 09:
+        case "12AM":
             box.append(list.removeFirst())
             fallthrough
-        case 12:
+        case "3AM":
             box.append(list.removeFirst())
             fallthrough
-        case 15:
+        case "6AM":
             box.append(list.removeFirst())
             fallthrough
-        case 18:
+        case "9AM":
             box.append(list.removeFirst())
             fallthrough
-        case 21:
+        case "12PM":
             box.append(list.removeFirst())
             fallthrough
-        case 24:
+        case "3PM":
             box.append(list.removeFirst())
             fallthrough
-        case 27:
+        case "6PM":
             box.append(list.removeFirst())
             fallthrough
-        case 30:
+        case "9PM":
             box.append(list.removeFirst())
             fallthrough
         default:
@@ -178,9 +195,9 @@ class MainViewModel {
         
         // result -> customForecastList 변환 작업
         result.forEach {
-            let day = String($0.last?.dtTxt.split(separator: " ")[0].suffix(2) ?? "")
+            let day = self.unixTimeStampToString(unixTimeStamp: $0[0].dt, format: "d")
             let tempMin = $0.sorted(by: { $0.main.tempMin < $1.main.tempMin })[0].main.tempMin
-            let tempMax = $0.sorted(by: { $0.main.tempMax > $1.main.tempMax })[0].main.tempMin
+            let tempMax = $0.sorted(by: { $0.main.tempMax > $1.main.tempMax })[0].main.tempMax
             let pop = $0.sorted(by: { $0.pop > $1.pop })[0].pop
             let icon = $0.sorted(by: { $0.pop > $1.pop })[0].weather[0].icon
             
