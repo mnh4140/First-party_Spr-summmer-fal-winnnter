@@ -17,9 +17,6 @@ class SettingsViewController: UIViewController {
     // Property
     private let disposeBag = DisposeBag()
     
-//    private let locationViewModel = ViewModel()
-//    lazy var viewModel = MainViewModel(locationViewModel: locationViewModel)
-    
     var viewModel: MainViewModel?
     
     // MARK: - UIProperty
@@ -47,38 +44,6 @@ class SettingsViewController: UIViewController {
         
         return segmentedControl
     }()
-    
-    private let darkModeLabel: UILabel = {
-        let label = UILabel()
-        label.text = "다크모드"
-        label.font = .systemFont(ofSize: 20)
-        label.textColor = .black
-        
-        return label
-    }()
-    
-    private let switchButton: UISwitch = {
-        let switchButton = UISwitch()
-        
-        return switchButton
-    }()
-    
-    private let adLabel: UILabel = {
-        let label = UILabel()
-        label.text = "광고로부터 벗어나기"
-        label.font = .systemFont(ofSize: 20)
-        label.textColor = .black
-        
-        return label
-    }()
-    
-    private let removeAdButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("결제하기", for: .normal)
-        
-        return button
-    }()
-    
 }
 
 // MARK: - Lifecycle
@@ -106,7 +71,7 @@ extension SettingsViewController {
     private func setupUI() {
         view.backgroundColor = .white
         
-        [titleLabel, tempLabel, segmentedControl, darkModeLabel, switchButton, adLabel, removeAdButton]
+        [titleLabel, tempLabel, segmentedControl]
             .forEach { view.addSubview($0) }
         
         titleLabel.snp.makeConstraints {
@@ -121,26 +86,6 @@ extension SettingsViewController {
         segmentedControl.snp.makeConstraints {
             $0.top.equalTo(tempLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(24)
-        }
-        
-        darkModeLabel.snp.makeConstraints {
-            $0.top.equalTo(segmentedControl.snp.bottom).offset(48)
-            $0.leading.equalTo(titleLabel)
-        }
-        
-        switchButton.snp.makeConstraints {
-            $0.centerY.equalTo(darkModeLabel)
-            $0.leading.equalTo(darkModeLabel.snp.trailing).offset(16)
-        }
-        
-        adLabel.snp.makeConstraints {
-            $0.top.equalTo(darkModeLabel.snp.bottom).offset(48)
-            $0.leading.equalTo(titleLabel)
-        }
-        
-        removeAdButton.snp.makeConstraints {
-            $0.top.equalTo(adLabel.snp.bottom).offset(16)
-            $0.centerX.equalTo(adLabel)
         }
     }
     

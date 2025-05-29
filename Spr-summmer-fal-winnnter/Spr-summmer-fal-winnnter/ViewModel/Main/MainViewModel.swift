@@ -26,16 +26,18 @@ class MainViewModel {
     }
     
     enum Input {
-        case settingButtonTap
-        case searchButtonTap
-        case changeCoordinate
-        case searchAddressData(AddressData.Document.Address)
-        case setUnitButtonTap(Int)
+        case settingButtonTap // 설정 버튼 탭 감지
+        case searchButtonTap // 검색 버튼 탭 감지
+        case changeCoordinate // 사용자 위치 변경 감지
+        case searchAddressData(AddressData.Document.Address) // 검색어 감지
+        case setUnitButtonTap(Int) // 섭씨 화씨 변환 감지
     }
     
+    // MainViewModel -> View
     struct Output {
-        let showSettingMenu = PublishRelay<Void>()
-        let showSearchView = PublishRelay<Void>()
+        // 화면 전달
+        let showSettingMenu = PublishRelay<Void>() // 설정 화면 띄움
+        let showSearchView = PublishRelay<Void>() // 검색 화면 띄움
         
         let mainCellData = BehaviorRelay<MainCellData?>(value: nil)
         let snapshotRelay = BehaviorRelay<NSDiffableDataSourceSnapshot<Section, Item>?>(value: nil)
@@ -43,8 +45,9 @@ class MainViewModel {
         let tenDayForecastCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
         let customForecastData = BehaviorRelay<[CustomForecastData]?>(value: nil)
 
+        // TODO: - 이름 변경하기
+        //let forecastListCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
         let forecastListCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
-        let NOHUNforecastListCellData = BehaviorRelay<tenDayForecastData?>(value: nil)
     }
     
     struct MainCellData: Hashable {
@@ -80,9 +83,9 @@ class MainViewModel {
     let latitude = BehaviorRelay<String>(value: "37.56")
     let longitude = BehaviorRelay<String>(value: "127.4")
     
-    let locationViewModel: ViewModel
+    let locationViewModel: LocationViewModel
     
-    init(locationViewModel: ViewModel ) {
+    init(locationViewModel: LocationViewModel ) {
         self.locationViewModel = locationViewModel
         applyDummyData() // 더미데이터 생성 메소드
         transform()
@@ -119,16 +122,10 @@ class MainViewModel {
                     // 뷰모델에 위도 경도 값 주입
                     self.latitude.accept(y)
                     self.longitude.accept(x)
-                    
-                    // 현재 날씨 데이터를 가져오는 로직
-//                    self.loadWeatherResponseData()
                     print("위도 경도 \(self.latitude.value), \(self.longitude.value)")
                     self.input.accept(.changeCoordinate)
                 case .setUnitButtonTap(let unit):
                     self.tempUnit.accept(unit)
-                    print(unit)
-                    print(latitude.value, longitude.value)
-//                    self.loadWeatherResponseData()
                     self.loadForecastListData()
                     
                 }
@@ -170,6 +167,24 @@ class MainViewModel {
         output.snapshotRelay.accept(snapshot)
     }
     
+    // yyyy-MM-dd HH:mm:ss가 기본, a는 AM/PM
+    // hh(소문자)는 12시간 단위, h는 한 자리만 표시
+    // ForecastList.dt의 Unix Timestamp 값을 format으로 넣어준 형태의 String으로 변환하는 메서드
+    private func unixTimeStampToString(unixTimeStamp: Int, format: String) -> String {
+        
+        // dt에 저장된 Unix timestamp를 Date타입으로 변환
+        let customDate = Date(timeIntervalSince1970: Double(unixTimeStamp))
+        
+        // DateFormatter 생성
+        let customDateFormatter = DateFormatter()
+        // DateFormatter의 포맷을 "시간+AM or PM"으로 설정
+        customDateFormatter.dateFormat = format
+        // DateFormat 실행
+        let hour = customDateFormatter.string(from: customDate)
+        
+        return hour
+    }
+    
     // ForecastList의 데이터를 CustomForecastList로 변환하는 메서드
     private func transformForecastListData(data: [ForecastList]) {
         var list = data                 // removeFirst 메서드를 사용하기 위해 변수 생성
@@ -177,48 +192,34 @@ class MainViewModel {
         var result = [[ForecastList]]() // 데이터를 하루 단위의 배열로 가지게 될 변수
         
         // 첫 데이터의 시간 체크
-        var firstHour = String(list[0].dtTxt.components(separatedBy: " ")[1].prefix(2))
-        
-        // ForecastList는 6시간 전의 데이터부터 불러옴
-        // 그래서 만약 이전 시간이 어제일 경우 데이터 삭제
-        switch firstHour {
-        case "18":
-            list.removeFirst()
-            fallthrough
-        case "21":
-            list.removeFirst()
-        default:
-            break
-        }
-        
-        // 첫 데이터 시간 체크 갱신
-        firstHour = String(list[0].dtTxt.components(separatedBy: " ")[1].prefix(2))
+        let firstHour = self.unixTimeStampToString(unixTimeStamp: list[0].dt, format: "ha")
         
         // 첫 날(오늘) 데이터를 box에 담음
         switch firstHour {
-        case "00":
+        case "12AM":
             box.append(list.removeFirst())
             fallthrough
-        case "03":
+        case "3AM":
             box.append(list.removeFirst())
             fallthrough
-        case "06":
+        case "6AM":
             box.append(list.removeFirst())
             fallthrough
-        case "09":
+        case "9AM":
             box.append(list.removeFirst())
             fallthrough
-        case "12":
+        case "12PM":
             box.append(list.removeFirst())
             fallthrough
-        case "15":
+        case "3PM":
             box.append(list.removeFirst())
             fallthrough
-        case "18":
+        case "6PM":
             box.append(list.removeFirst())
             fallthrough
-        case "21":
+        case "9PM":
             box.append(list.removeFirst())
+            fallthrough
         default:
             break
         }
@@ -247,9 +248,9 @@ class MainViewModel {
         
         // result -> customForecastList 변환 작업
         result.forEach {
-            let day = String($0[0].dtTxt.split(separator: " ")[0].suffix(2))
+            let day = self.unixTimeStampToString(unixTimeStamp: $0[0].dt, format: "d")
             let tempMin = $0.sorted(by: { $0.main.tempMin < $1.main.tempMin })[0].main.tempMin
-            let tempMax = $0.sorted(by: { $0.main.tempMax > $1.main.tempMax })[0].main.tempMin
+            let tempMax = $0.sorted(by: { $0.main.tempMax > $1.main.tempMax })[0].main.tempMax
             let pop = $0.sorted(by: { $0.pop > $1.pop })[0].pop
             let icon = $0.sorted(by: { $0.pop > $1.pop })[0].weather[0].icon
             
@@ -315,7 +316,7 @@ class MainViewModel {
         NetworkManager.shared.fetchForeCastAndTenImageData(lat: latitude.value, lon: longitude.value, tempUnit: tempUnit.value)
             .subscribe(onSuccess: { [weak self] weather, data in
                 guard let self else { return }
-                // print("\t\t📋 [메인 모델] MainViewModel NOHUNloadForecastListData fetch 성공!")
+                self.ForecastDatas = []
 
                 var image = [UIImage]()
                 data.forEach {
@@ -326,18 +327,15 @@ class MainViewModel {
                 
                 self.transformForecastListData(data: weather.list)
 
-                var list = [ForecastList](weather.list.prefix(12))
-                image = [UIImage](image.prefix(12))
-
-                if list.count >= 2 { list.removeFirst(2) }
-                if image.count >= 2 { image.removeFirst(2) }
+                let list = [ForecastList](weather.list.prefix(10))
+                image = [UIImage](image.prefix(10))
                 
                 for (listElement, imageElement) in zip(list, image) {
                     self.ForecastDatas.append(tenDayForecastDataForDiffableDS(forecastList: listElement, weatherIcons: imageElement))
                 }
 
                 let result = tenDayForecastData(forecastList: list, weatherIcons: image)
-                self.output.NOHUNforecastListCellData.accept(result)
+                self.output.forecastListCellData.accept(result)
 
             }, onFailure: { error in
                 print("loadForecastListData forecast 로딩 실패: \(error)")
@@ -349,17 +347,9 @@ class MainViewModel {
 //        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude.value, lon: longitude.value, tempUnit: tempUnit.value)
 //            .subscribe { [weak self] (weather, imageURL) in
 //                guard let self else { return }
+//                
 //                self.output.mainCellData.accept(weather)
-//            } onFailure: { error in
-//                print(error)
-//            }.disposed(by: disposeBag)
-//    }
-    
-//    private func NOHUNloadWeatherResponseData() {
-//        NetworkManager.shared.fetchCurrentWeatherData(lat: latitude, lon: longitude)
-//            .subscribe { [weak self] (weather, imageURL) in
-//                guard let self else { return }
-//                self.output.mainCellData.accept(weather)
+//                
 //            } onFailure: { error in
 //                print(error)
 //            }.disposed(by: disposeBag)
@@ -382,7 +372,6 @@ class MainViewModel {
         menuNavVC.menuWidth = UIScreen.main.bounds.width * 0.7
         menuNavVC.presentationStyle = .menuSlideIn
         SideMenuManager.default.leftMenuNavigationController = menuNavVC
-//           SideMenuManager.default.leftMenuNavigationController?.setNavigationBarHidden(true, animated: true)
     }
 }
 
@@ -420,7 +409,7 @@ extension MainViewModel {
             forecastList: dummyForecastList,
             weatherIcons: iconList
         )
-        output.NOHUNforecastListCellData.accept(forecastData)
+        output.forecastListCellData.accept(forecastData)
 
         // 3. CustomForecastList 더미 5일치
         let dummyCustomForecast: [CustomForecastData] = (1...5).map { day in

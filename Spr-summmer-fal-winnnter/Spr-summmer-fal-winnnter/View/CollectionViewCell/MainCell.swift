@@ -92,8 +92,6 @@ class MainCell: UICollectionViewCell {
         let tempResult = tempUnit == 0 ? "°C" : "°F"
         tempLabel.text = "\(Int(weather.main.temp))" + tempResult
         weatherLabel.text = weather.weather[0].main
-//        minTempLabel.text = "\(Int(weather.main.tempMin))°C"
-//        maxTempLabel.text = "\(Int(weather.main.tempMax))°C"
     }
     
     func setMinMaxTempForDay(temp: CustomForecastList, tempUnit: Int) {
@@ -103,10 +101,9 @@ class MainCell: UICollectionViewCell {
     }
     
     /// [위치] 주소 정보 바인딩
-    func bindAddress(with viewModel: ViewModel) {
+    func bindAddress(with viewModel: LocationViewModel) {
         viewModel.regionCodeRelay
             .asDriver(onErrorJustReturn: [])
-            //.map { $0.first?.addressName ?? "주소 없음" }
             .map {
                 guard let region2DepthName = $0.first?.region2DepthName else { return "주소 없음" }
                 guard let region3DepthName = $0.first?.region3DepthName else { return "주소 없음" }
@@ -116,11 +113,6 @@ class MainCell: UICollectionViewCell {
             .drive(cityLabel.rx.text)
             .disposed(by: disposeBag)
     }
-    
-    /// 라벨에 현재 주소 출력
-//    func setRegion(_ region: String) {
-//        cityLabel.text = region
-//    }
     
     private func setupUI() {
         [minTempLabel, maxTempLabel]

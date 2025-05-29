@@ -15,13 +15,13 @@ final class SearchViewController: UIViewController {
     let searchBar = UISearchBar()
     let tableView = UITableView()
     
-    private let viewModel: ViewModel
+    private let viewModel: LocationViewModel
     private let mainViewModel: MainViewModel
     
     let dataRelay = BehaviorRelay<[AddressData.Document.Address]>(value: [])
     var disposeBag = DisposeBag()
     
-    init(viewModel: ViewModel, mainViewModel: MainViewModel) {
+    init(viewModel: LocationViewModel, mainViewModel: MainViewModel) {
         self.viewModel = viewModel
         self.mainViewModel = mainViewModel
         super.init(nibName: nil, bundle: nil)

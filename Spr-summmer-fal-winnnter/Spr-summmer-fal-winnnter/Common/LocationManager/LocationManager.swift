@@ -22,10 +22,10 @@ final class LocationManager: NSObject {
     let errorSubject = PublishSubject<String>()
     
     // 좌표 전달 서브젝트
-    let coordinateSubject = PublishSubject<CLLocationCoordinate2D>()
+    let coordinateSubject = BehaviorSubject<CLLocationCoordinate2D?>(value: nil)
 
     
-    var locationViewModel = ViewModel()
+    var locationViewModel = LocationViewModel()
     
     
     private override init() {
@@ -44,7 +44,6 @@ final class LocationManager: NSObject {
             locationManager.requestWhenInUseAuthorization()
         case .authorizedWhenInUse, .authorizedAlways: // 권한이 있으면 requestLocation() 호출 → 현재 위치 1회 요청
             locationManager.requestLocation() // 한번 요청
-            //locationManager.startUpdatingLocation() // 지속적 요청
             
         default:
             errorSubject.onNext("위치 권한이 없습니다.")
@@ -78,10 +77,6 @@ extension LocationManager: CLLocationManagerDelegate {
             errorSubject.onNext("위치 정보를 찾을 수 없습니다.")
             return
         }
-        
-        // 디버깅
-        //print("\t📌 [위치 관리자] 좌표 정보 가져오기 성공")
-        //print("\t\t📌 [위치 관리자] latitude : \(location.coordinate.latitude) longitude : \(location.coordinate.longitude)")
         
         // 현재 좌표를 방출
         self.coordinateSubject.onNext(location.coordinate)

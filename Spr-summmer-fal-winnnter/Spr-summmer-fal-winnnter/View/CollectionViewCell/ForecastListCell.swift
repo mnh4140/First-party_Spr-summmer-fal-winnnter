@@ -59,14 +59,17 @@ class ForecastListCell: UICollectionViewCell {
     }
     
     private func changeDate(data: ForecastList) -> String {
-        let date = data.dtTxt.components(separatedBy: " ")
-        guard let hour = Int(String(date[1].prefix(2))) else { return "" }
+        // dt에 저장된 Unix timestamp를 Date타입으로 변환
+        let customDate = Date(timeIntervalSince1970: Double(data.dt))
         
-        if hour > 12 {
-            return "\(hour - 12)PM"
-        } else {
-            return "\(hour)AM"
-        }
+        // DateFormatter 생성
+        let customDateFormatter = DateFormatter()
+        // DateFormatter의 포맷을 "시간+AM or PM"으로 설정
+        customDateFormatter.dateFormat = "ha"
+        // DateFormat 실행
+        let hour = customDateFormatter.string(from: customDate)
+        
+        return hour
     }
     
     private func setupUI() {

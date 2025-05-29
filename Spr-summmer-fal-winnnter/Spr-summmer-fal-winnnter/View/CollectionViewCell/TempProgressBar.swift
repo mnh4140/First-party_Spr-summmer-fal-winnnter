@@ -14,8 +14,15 @@ import Foundation
 class TempProgressBar: UIView {
     
     // 그래프 기준 온도
-    private let sysMin: Double = 10
-    private let sysMax: Double = 30
+    private let sysMinForCelsius: Double = 10
+    private let sysMaxForCelsius: Double = 30
+    
+    private var sysMinForFahrenheit: Double {
+        (sysMinForCelsius * 9 / 5) + 32
+    }
+    private var sysMaxForFahrenheit: Double {
+        (sysMaxForCelsius * 9 / 5) + 32
+    }
     
     private let backgroundBar: UIView = {
         let view = UIView()
@@ -64,17 +71,25 @@ class TempProgressBar: UIView {
         }
     }
     
-    // 최고, 최저 기온에 맞게 파란 영역을 잡아주는 메서드
-    func update(currentTemp: Double, minTemp: Double, maxTemp: Double) {
-        let sysRange = (Int(self.sysMin)...Int(self.sysMax)).count
+    // 기온에 맞게 파란 영역, 흰색 포인트를 잡아주는 메서드
+    func update(currentTemp: Double, minTemp: Double, maxTemp: Double, tempUnit: Int) {
+        var sysMin = self.sysMinForCelsius
+        var sysMax = self.sysMaxForCelsius
+        
+        if tempUnit == 1 {
+            sysMin = self.sysMinForFahrenheit
+            sysMax = self.sysMaxForFahrenheit
+        }
+        
+        let sysRange = (Int(sysMin)...Int(sysMax)).count
         let tempRange = (Int(minTemp)...Int(maxTemp)).count
         
         let width = CGFloat(Double(tempRange) / Double(sysRange))
         
         layoutIfNeeded() // 레이아웃 강제 적용(frame 값을 받아 쓰기 위해)
-        let persent = CGFloat(abs(minTemp - self.sysMin) / Double(sysRange))
+        let persent = CGFloat(abs(minTemp - sysMin) / Double(sysRange))
         let leading = persent * backgroundBar.frame.width
-        let currentPersent = CGFloat(abs(currentTemp - self.sysMin) / Double(sysRange))
+        let currentPersent = CGFloat(abs(currentTemp - sysMin) / Double(sysRange))
         let currentLeading = currentPersent * backgroundBar.frame.width
         
         currentTempPoint.snp.remakeConstraints {
