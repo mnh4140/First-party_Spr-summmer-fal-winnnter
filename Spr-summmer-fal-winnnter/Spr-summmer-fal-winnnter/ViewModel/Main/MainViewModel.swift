@@ -20,7 +20,7 @@ class MainViewModel {
     
     enum Item: Hashable {
         case mainCell(MainCellData?)
-        case clothesCell
+        case clothesCell(MainCellData?)
         case forecastCell(tenDayForecastDataForDiffableDS?)
         case tenDayForecastCell(CustomForecastData?)
     }
@@ -144,7 +144,7 @@ class MainViewModel {
         snapshot.appendSections([.main])
         snapshot.appendItems(mainItem)
         
-        clothesItem.append(.clothesCell)
+        clothesItem.append(.clothesCell(self.output.mainCellData.value))
         
         snapshot.appendSections([.clothes])
         snapshot.appendItems(clothesItem)

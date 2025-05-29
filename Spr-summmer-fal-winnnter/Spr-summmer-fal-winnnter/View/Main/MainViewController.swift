@@ -170,11 +170,11 @@ extension MainViewController {
                 cell.bindAddress(with: self.locationViewModel)
                 
                 return cell
-            case .clothesCell:
+            case .clothesCell(let weather):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ClothesCell.identifier, for: indexPath) as? ClothesCell else { return .init() }
                 
                 // 날씨 데이터 가져오기
-                if let weather = self.viewModel.output.mainCellData.value {
+                if let weather {
                     let temp = weather.weatherResponse.main.temp
                     let condition = weather.weatherResponse.weather.first?.main ?? "Clear"
                     let unit = self.viewModel.tempUnit.value
